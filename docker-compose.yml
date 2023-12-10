@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:16.1-alpine3.18
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=UUcm3K4nT3MEFRmfRMj4
+      - POSTGRES_USER=cake
+      - POSTGRES_DB=cakecdn_db
+
+  s3:
+    image: minio/minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - s3_storage:/data
+    environment:
+      MINIO_ROOT_USER: cakecdn
+      MINIO_ROOT_PASSWORD: sbmKVeCWHwd4fxbMqwuY
+    command: server --console-address ":9001" /data
+
+volumes:
+  s3_storage:
+  db_storage:

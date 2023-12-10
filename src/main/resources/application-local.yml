@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cakecdn_db
+    username: cake
+    password: UUcm3K4nT3MEFRmfRMj4
+  jpa:
+    hibernate:
+      ddl-auto: <create | create-drop | update | validate | none>
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
