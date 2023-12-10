@@ -1,6 +1,8 @@
 package pl.ninecube.oss.cakecdn.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.ninecube.oss.cakecdn.model.dto.OwnerCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.OwnerResponse;
@@ -15,20 +17,22 @@ public class OwnerRestController {
     private final OwnerService ownerService;
 
     @PostMapping
-    public OwnerResponse createOwner(OwnerCreateDto dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public OwnerResponse createOwner(@Valid @RequestBody OwnerCreateDto dto) {
         return ownerService.saveOwner(dto);
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
+    @GetMapping("/{ownerId}")
     public OwnerResponse readOwner(@PathVariable Long ownerId) {
         return ownerService.getOwnerById(ownerId);
     }
-    @PutMapping(value = "/{id}", produces = "application/json")
+
+    @PutMapping("/{ownerId}")
     public OwnerResponse updateOwner(@PathVariable Long ownerId, OwnerUpdateDto dto) {
         return ownerService.updateOwnerById(ownerId, dto);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/ownerId")
     public void deleteOwner(@PathVariable Long ownerId) {
         ownerService.deleteOwner(ownerId);
     }
