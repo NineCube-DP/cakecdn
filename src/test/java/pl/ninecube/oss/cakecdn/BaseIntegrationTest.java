@@ -1,9 +1,11 @@
 package pl.ninecube.oss.cakecdn;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -20,6 +22,7 @@ import org.testcontainers.utility.DockerImageName;
 @AutoConfigureMockMvc
 @TestPropertySource(
         locations = "classpath:application-integration.yml")
+@ActiveProfiles("integration")
 public class BaseIntegrationTest {
 
     @Autowired

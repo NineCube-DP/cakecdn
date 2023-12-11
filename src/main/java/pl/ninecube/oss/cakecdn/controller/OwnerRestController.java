@@ -1,6 +1,7 @@
 package pl.ninecube.oss.cakecdn.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import pl.ninecube.oss.cakecdn.service.OwnerService;
 @RequestMapping("/owner")
 @RequiredArgsConstructor
 @Tag(name = "Managing owners")
+@SecurityRequirement(name = "basicAuth")
 public class OwnerRestController {
 
     private final OwnerService ownerService;

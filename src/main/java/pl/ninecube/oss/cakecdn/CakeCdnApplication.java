@@ -10,10 +10,4 @@ public class CakeCdnApplication {
     public static void main(String[] args) {
         SpringApplication.run(CakeCdnApplication.class, args);
     }
-
-//    @Bean
-//    BCryptPasswordEncoder passwordEncoder() {
-//
-//        return new BCryptPasswordEncoder();
-//    }
 }
