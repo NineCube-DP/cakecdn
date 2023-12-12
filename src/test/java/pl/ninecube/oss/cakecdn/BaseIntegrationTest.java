@@ -1,6 +1,7 @@
 package pl.ninecube.oss.cakecdn;
 
 import lombok.RequiredArgsConstructor;
+import net.datafaker.Faker;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,10 +24,12 @@ import org.testcontainers.utility.DockerImageName;
 @TestPropertySource(
         locations = "classpath:application-integration.yml")
 @ActiveProfiles("integration")
-public class BaseIntegrationTest {
+public abstract class BaseIntegrationTest {
 
     @Autowired
     protected MockMvc mvc;
+
+    protected static final Faker faker = new Faker();
 
     static int MINIO_API_PORT = 9000;
     static int MINIO_DASHBOARD_PORT = 9001;

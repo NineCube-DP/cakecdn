@@ -36,7 +36,7 @@ public class OwnerRestController {
 
     @PutMapping("/{ownerId}")
     @Operation(summary = "Update owner data by id")
-    public OwnerResponse updateOwner(@PathVariable Long ownerId, OwnerUpdateDto dto) {
+    public OwnerResponse updateOwner(@PathVariable Long ownerId, @RequestBody OwnerUpdateDto dto) {
         return ownerService.updateOwnerById(ownerId, dto);
     }
 

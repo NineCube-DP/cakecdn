@@ -18,19 +18,27 @@ public class OwnerService {
     private final OwnerMapper ownerMapper;
 
     public OwnerResponse saveOwner(OwnerCreateDto dto) {
-        OwnerEntity entity = ownerRepository.save(ownerMapper.toEntity(dto));
+        var owner = ownerMapper.toDomain(dto);
+        var entity = ownerRepository.save(ownerMapper.toEntity(owner));
 
         return ownerMapper.toResponse(entity);
     }
 
     public OwnerResponse getOwnerById(Long ownerId) {
-        OwnerEntity entity = ownerRepository.findById(ownerId)
+        var entity = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new BusinessException("Owner not found"));
         return ownerMapper.toResponse(entity);
     }
 
     public OwnerResponse updateOwnerById(Long ownerId, OwnerUpdateDto dto) {
-        return null;
+        var entity = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new BusinessException("Owner not found"));
+
+        var updated = ownerMapper.update(ownerMapper.toDomain(entity), dto);
+
+        var updatedEntity = ownerRepository.save(ownerMapper.toEntity(updated));
+
+        return ownerMapper.toResponse(updatedEntity);
     }
 
     public void deleteOwner(Long ownerId) {
