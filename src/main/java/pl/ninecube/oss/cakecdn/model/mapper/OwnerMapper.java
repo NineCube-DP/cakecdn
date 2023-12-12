@@ -1,8 +1,8 @@
 package pl.ninecube.oss.cakecdn.model.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.ninecube.oss.cakecdn.model.dto.OwnerCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.OwnerResponse;
 import pl.ninecube.oss.cakecdn.model.entity.OwnerEntity;
@@ -11,8 +11,18 @@ import pl.ninecube.oss.cakecdn.model.entity.OwnerEntity;
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface OwnerMapper {
-    OwnerEntity toEntity(OwnerCreateDto dto);
+public abstract class OwnerMapper {
 
-    OwnerResponse toResponse(OwnerEntity entity);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
+    public abstract OwnerEntity toEntity(OwnerCreateDto dto);
+
+    public abstract OwnerResponse toResponse(OwnerEntity entity);
+
+    @Named("encodePassword")
+    public String encodePassword(String plainPassword) {
+        return passwordEncoder.encode(plainPassword);
+    }
 }

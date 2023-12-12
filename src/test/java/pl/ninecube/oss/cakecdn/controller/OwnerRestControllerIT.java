@@ -49,6 +49,30 @@ class OwnerRestControllerIT extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldEncryptPasswordTest() throws Exception {
+        var ownerCreateDto = OwnerCreateDto.builder()
+                .username(faker.name().username())
+                .password(faker.password().toString())
+                .build();
+
+        var result = mvc.perform(post("/owner")
+                        .with(httpBasic("admin", "password"))
+                        .content(objectMapper.writeValueAsString(ownerCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var content = result.getResponse().getContentAsString();
+
+        var response = objectMapper.readValue(content, OwnerResponse.class);
+
+        var owner = ownerRepository.findById(response.getId()).orElse(null);
+
+        assert Objects.nonNull(owner);
+        assert !owner.getPassword().equals(ownerCreateDto.getPassword());
+    }
+
+    @Test
     public void shouldReturnUnauthorizedTest() throws Exception {
         var ownerCreateDto = OwnerCreateDto.builder()
                 .username(faker.name().username())
@@ -89,4 +113,6 @@ class OwnerRestControllerIT extends BaseIntegrationTest {
                 .andExpect(status().isNotFound());
 
     }
+
+
 }
