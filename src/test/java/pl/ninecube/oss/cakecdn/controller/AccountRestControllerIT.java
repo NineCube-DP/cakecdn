@@ -2,16 +2,15 @@ package pl.ninecube.oss.cakecdn.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import pl.ninecube.oss.cakecdn.BaseIntegrationTest;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerCreateDto;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerResponse;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerUpdateDto;
-import pl.ninecube.oss.cakecdn.model.entity.OwnerEntity;
-import pl.ninecube.oss.cakecdn.repository.OwnerRepository;
+import pl.ninecube.oss.cakecdn.model.dto.AccountCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.AccountUpdateDto;
+import pl.ninecube.oss.cakecdn.model.dto.AccountResponse;
+import pl.ninecube.oss.cakecdn.model.entity.AccountEntity;
+import pl.ninecube.oss.cakecdn.repository.AccountRepository;
 
 import java.util.Objects;
 
@@ -20,141 +19,141 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-class OwnerRestControllerIT extends BaseIntegrationTest {
+class AccountRestControllerIT extends BaseIntegrationTest {
 
-    private final OwnerRepository ownerRepository;
+    private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
 
     @Test
-    public void shouldSaveNewOwnerTest() throws Exception {
-        var ownerCreateDto = OwnerCreateDto.builder()
+    public void shouldSaveNewAccountTest() throws Exception {
+        var accountCreateDto = AccountCreateDto.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build();
 
-        var result = mvc.perform(post("/owner")
+        var result = mvc.perform(post("/account")
                         .with(httpBasic("admin", "password"))
-                        .content(objectMapper.writeValueAsString(ownerCreateDto))
+                        .content(objectMapper.writeValueAsString(accountCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         var content = result.getResponse().getContentAsString();
 
-        var response = objectMapper.readValue(content, OwnerResponse.class);
+        var response = objectMapper.readValue(content, AccountResponse.class);
 
-        assert ownerRepository.existsById(response.getId());
+        assert accountRepository.existsById(response.getId());
     }
 
     @Test
     public void shouldEncryptPasswordTest() throws Exception {
-        var ownerCreateDto = OwnerCreateDto.builder()
+        var accountCreateDto = AccountCreateDto.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build();
 
-        var result = mvc.perform(post("/owner")
+        var result = mvc.perform(post("/account")
                         .with(httpBasic("admin", "password"))
-                        .content(objectMapper.writeValueAsString(ownerCreateDto))
+                        .content(objectMapper.writeValueAsString(accountCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         var content = result.getResponse().getContentAsString();
 
-        var response = objectMapper.readValue(content, OwnerResponse.class);
+        var response = objectMapper.readValue(content, AccountResponse.class);
 
-        var owner = ownerRepository.findById(response.getId()).orElse(null);
+        var account = accountRepository.findById(response.getId()).orElse(null);
 
-        assert Objects.nonNull(owner);
-        assert !owner.getPassword().equals(ownerCreateDto.getPassword());
+        assert Objects.nonNull(account);
+        assert !account.getPassword().equals(accountCreateDto.getPassword());
     }
 
     @Test
     public void shouldReturnUnauthorizedTest() throws Exception {
-        var ownerCreateDto = OwnerCreateDto.builder()
+        var accountCreateDto = AccountCreateDto.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build();
 
-        mvc.perform(post("/owner")
+        mvc.perform(post("/account")
                         .with(httpBasic("non_existing_user", "password"))
-                        .content(objectMapper.writeValueAsString(ownerCreateDto))
+                        .content(objectMapper.writeValueAsString(accountCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void shouldReturnExistingOwnerTest() throws Exception {
-        var saved = ownerRepository.save(OwnerEntity.builder()
+    public void shouldReturnExistingAccountTest() throws Exception {
+        var saved = accountRepository.save(AccountEntity.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build());
 
-        var result = mvc.perform(get("/owner/{id}", saved.getId())
+        var result = mvc.perform(get("/account/{id}", saved.getId())
                         .with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andReturn();
 
         var content = result.getResponse().getContentAsString();
 
-        var response = objectMapper.readValue(content, OwnerResponse.class);
+        var response = objectMapper.readValue(content, AccountResponse.class);
 
         assert response.getUsername().equalsIgnoreCase(saved.getUsername());
         assert Objects.equals(response.getId(), saved.getId());
     }
 
     @Test
-    public void shouldReturnErrorOnNonExistingOwnerTest() throws Exception {
-        mvc.perform(get("/owner/{id}", faker.number().randomDigitNotZero())
+    public void shouldReturnErrorOnNonExistingAccountTest() throws Exception {
+        mvc.perform(get("/account/{id}", faker.number().randomDigitNotZero())
                         .with(httpBasic("admin", "password")))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void shouldUpdateOwnerTest() throws Exception {
-        var ownerCreateDto = OwnerCreateDto.builder()
+    public void shouldUpdateAccountTest() throws Exception {
+        var accountCreateDto = AccountCreateDto.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build();
 
-        var resultCreate = mvc.perform(post("/owner")
+        var resultCreate = mvc.perform(post("/account")
                         .with(httpBasic("admin", "password"))
-                        .content(objectMapper.writeValueAsString(ownerCreateDto))
+                        .content(objectMapper.writeValueAsString(accountCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         var content = resultCreate.getResponse().getContentAsString();
 
-        var response = objectMapper.readValue(content, OwnerResponse.class);
+        var response = objectMapper.readValue(content, AccountResponse.class);
 
-        var savedOwner = ownerRepository.findById(response.getId()).orElse(null);
+        var savedAccount = accountRepository.findById(response.getId()).orElse(null);
 
-        assert Objects.nonNull(savedOwner);
+        assert Objects.nonNull(savedAccount);
 
-        var ownerUpdateDto = OwnerUpdateDto.builder()
+        var accountUpdateDto = AccountUpdateDto.builder()
                 .username(faker.name().username())
                 .password(faker.internet().password())
                 .build();
 
-        var resultUpdate = mvc.perform(put("/owner/{id}", savedOwner.getId())
+        var resultUpdate = mvc.perform(put("/account/{id}", savedAccount.getId())
                         .with(httpBasic("admin", "password"))
-                        .content(objectMapper.writeValueAsString(ownerUpdateDto))
+                        .content(objectMapper.writeValueAsString(accountUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         content = resultUpdate.getResponse().getContentAsString();
 
-        response = objectMapper.readValue(content, OwnerResponse.class);
+        response = objectMapper.readValue(content, AccountResponse.class);
 
-        var updatedOwner = ownerRepository.findById(response.getId()).orElse(null);
+        var updatedAccount = accountRepository.findById(response.getId()).orElse(null);
 
 
-        assert Objects.nonNull(updatedOwner);
-        assert !updatedOwner.getPassword().equals(savedOwner.getPassword());
-        assert !updatedOwner.getUsername().equals(savedOwner.getUsername());
+        assert Objects.nonNull(updatedAccount);
+        assert !updatedAccount.getPassword().equals(savedAccount.getPassword());
+        assert !updatedAccount.getUsername().equals(savedAccount.getUsername());
     }
 
 

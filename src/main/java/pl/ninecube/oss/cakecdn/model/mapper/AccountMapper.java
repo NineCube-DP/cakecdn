@@ -3,38 +3,38 @@ package pl.ninecube.oss.cakecdn.model.mapper;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.ninecube.oss.cakecdn.model.domain.Owner;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerCreateDto;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerResponse;
-import pl.ninecube.oss.cakecdn.model.dto.OwnerUpdateDto;
-import pl.ninecube.oss.cakecdn.model.entity.OwnerEntity;
+import pl.ninecube.oss.cakecdn.model.domain.Account;
+import pl.ninecube.oss.cakecdn.model.dto.AccountCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.AccountUpdateDto;
+import pl.ninecube.oss.cakecdn.model.dto.AccountResponse;
+import pl.ninecube.oss.cakecdn.model.entity.AccountEntity;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR
 )
-public abstract class OwnerMapper {
+public abstract class AccountMapper {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Mapping(ignore = true, target = "id")
     @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
-    public abstract Owner toDomain(OwnerCreateDto dto);
+    public abstract Account toDomain(AccountCreateDto dto);
 
-    public abstract Owner toDomain(OwnerEntity entity);
+    public abstract Account toDomain(AccountEntity entity);
 
-    public abstract OwnerEntity toEntity(Owner owner);
+    public abstract AccountEntity toEntity(Account account);
 
-    public abstract OwnerResponse toResponse(OwnerEntity entity);
+    public abstract AccountResponse toResponse(AccountEntity entity);
 
     @Mapping(ignore = true, target = "id")
-    public abstract OwnerResponse toResponse(Owner owner);
+    public abstract AccountResponse toResponse(Account account);
 
     @Mapping(ignore = true, target = "id")
     @BeanMapping(nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
-    public abstract Owner update(@MappingTarget Owner owner, OwnerUpdateDto dto);
+    public abstract Account update(@MappingTarget Account account, AccountUpdateDto dto);
 
     @Named("encodePassword")
     public String encodePassword(String plainPassword) {

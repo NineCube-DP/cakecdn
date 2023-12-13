@@ -6,14 +6,14 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
-@Table(name = "owners")
+@Table(name = "accounts")
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(value = AccessLevel.PACKAGE)
-public class OwnerEntity {
+public class AccountEntity {
     @Id
-    @SequenceGenerator(name = "owner_seq_generator", sequenceName = "owners_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "owner_seq_generator")
+    @SequenceGenerator(name = "accounts_seq_generator", sequenceName = "accounts_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
     private Long id;
 
     private String username;

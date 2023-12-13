@@ -1,8 +1,8 @@
-CREATE SEQUENCE owners_seq
+CREATE SEQUENCE accounts_seq
 INCREMENT 1
 START 1;
 
-CREATE TABLE owners (
+CREATE TABLE accounts (
     id SERIAL,
     username varchar(255) NOT NULL,
     password varchar(255),
