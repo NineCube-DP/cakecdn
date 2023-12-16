@@ -3,6 +3,8 @@ package pl.ninecube.oss.cakecdn.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -18,4 +20,7 @@ public class AccountEntity {
 
     private String username;
     private String password;
+
+    @OneToMany(mappedBy = "owner")
+    private List<ProjectEntity> projects;
 }

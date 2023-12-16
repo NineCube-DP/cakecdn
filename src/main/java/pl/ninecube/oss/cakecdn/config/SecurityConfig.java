@@ -31,8 +31,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile({"local", "integration"})
-    public UserDetailsService userDetailsService() {
+    @Profile({"integration"})
+    public UserDetailsService userDetailsServiceForTest() {
         UserDetails admin = User.builder()
                 .username("admin")
                 .password("password")
@@ -46,6 +46,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers("/account/**").authenticated()
+//                        .requestMatchers("/project/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults());

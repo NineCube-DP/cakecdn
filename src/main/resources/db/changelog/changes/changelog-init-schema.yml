@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: 'add accounts schema'
+      author: 'dpustula'
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: accounts_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR
+        - createSequence:
+            incrementBy: 1
+            sequenceName: accounts_seq
+            startValue: 2
+        - insert:
+            tableName: accounts
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2y$10$YqpS0fUuHdCTo29CMrzYxuA2RvZOq6.h0Sls2EFX7RtNXkJeZDAtS"
+  - changeSet:
+      id: 'add projects schema'
+      author: 'dpustula'
+      changes:
+        - createTable:
+            tableName: projects
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: projects_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: accounts_pkey
+                    references: accounts(id)
+                  name: account_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: base_url
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: enabled
+                  defaultValueBoolean: false
+                  type: BOOLEAN
+        - createSequence:
+            incrementBy: 1
+            sequenceName: projects_seq
+            startValue: 1
