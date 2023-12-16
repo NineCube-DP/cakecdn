@@ -19,7 +19,7 @@ public class ProjectEntity {
     private String name;
     private String baseUrl;
 
-    private Boolean enabled = false;
+    private boolean enabled = false;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

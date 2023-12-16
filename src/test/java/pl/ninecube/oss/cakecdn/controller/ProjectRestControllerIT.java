@@ -87,7 +87,7 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
 
         assert response.getName().equalsIgnoreCase(saved.getName());
         assert response.getBaseUrl().equalsIgnoreCase(saved.getBaseUrl());
-        assert response.getEnabled().equals(saved.getEnabled());
+        assert response.isEnabled() == saved.isEnabled();
         assert Objects.equals(response.getId(), saved.getId());
     }
 
@@ -143,7 +143,7 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
         assert Objects.nonNull(updatedAccount);
         assert response.getName().equalsIgnoreCase(project.getName());
         assert response.getBaseUrl().equalsIgnoreCase(projectUpdateDto.getBaseUrl());
-        assert response.getEnabled();
+        assert response.isEnabled();
     }
 
 

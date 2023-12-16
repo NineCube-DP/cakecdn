@@ -9,5 +9,5 @@ public class Project {
 
     String name;
     String baseUrl;
-    Boolean enabled;
+    boolean enabled;
 }

@@ -11,5 +11,5 @@ public class ProjectResponse {
     Long id;
     String name;
     String baseUrl;
-    Boolean enabled;
+    boolean enabled;
 }

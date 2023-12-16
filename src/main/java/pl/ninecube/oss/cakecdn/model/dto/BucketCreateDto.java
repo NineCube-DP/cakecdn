@@ -9,8 +9,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProjectUpdateDto {
+public class BucketCreateDto {
     String name;
-    String baseUrl;
-    boolean enabled;
 }

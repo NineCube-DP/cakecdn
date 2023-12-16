@@ -15,9 +15,6 @@ import pl.ninecube.oss.cakecdn.model.entity.ProjectEntity;
 )
 public abstract class ProjectMapper {
 
-    @Autowired
-    AccountMapper accountMapper;
-
     @Mapping(ignore = true, target = "id")
     @Mapping(ignore = true, target = "enabled")
     @Mapping(ignore = true, target = "owner")

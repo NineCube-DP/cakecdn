@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.Map;
+import java.util.Set;
+
 @Jacksonized
 @Builder
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProjectUpdateDto {
-    String name;
-    String baseUrl;
-    boolean enabled;
+public class StorageCreateDto {
+    String fileName;
+    Set<String> tags;
+    Set<String> categories;
+    Map<String, String> parameters;
 }
