@@ -7,23 +7,38 @@ databaseChangeLog:
             tableName: accounts
             columns:
               - column:
+                  name: id
                   autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: accounts_pkey
-                  name: id
                   type: BIGINT
               - column:
+                  name: username
                   constraints:
                     nullable: false
-                  name: username
                   type: VARCHAR
               - column:
+                  name: password
                   constraints:
                     nullable: false
-                  name: password
                   type: VARCHAR
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: VARCHAR
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
         - createSequence:
             incrementBy: 1
             sequenceName: accounts_seq
@@ -37,6 +52,21 @@ databaseChangeLog:
               - column:
                   name: password
                   value: "$2y$10$YqpS0fUuHdCTo29CMrzYxuA2RvZOq6.h0Sls2EFX7RtNXkJeZDAtS"
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: VARCHAR
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
   - changeSet:
       id: 'add projects schema'
       author: 'dpustula'
@@ -75,7 +105,202 @@ databaseChangeLog:
                   name: enabled
                   defaultValueBoolean: false
                   type: BOOLEAN
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: VARCHAR
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
         - createSequence:
             incrementBy: 1
             sequenceName: projects_seq
             startValue: 1
+  - changeSet:
+      id: 'add storage schema'
+      author: 'dpustula'
+      changes:
+        - createTable:
+            tableName: storages
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: storages_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: projects_pkey
+                    references: projects(id)
+                  name: project_id
+                  type: INT
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: VARCHAR
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+        - createSequence:
+            incrementBy: 1
+            sequenceName: storages_seq
+            startValue: 1
+  - changeSet:
+      id: 'add item schema'
+      author: 'dpustula'
+      changes:
+        - createTable:
+            tableName: items
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: items_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: original_file_name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: content_type
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: uuid
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_size
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: storages_pkey
+                    references: storages(id)
+                  name: storage_id
+                  type: INT
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: VARCHAR
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+        - createSequence:
+            incrementBy: 1
+            sequenceName: items_seq
+            startValue: 1
+        - createTable:
+            tableName: item_tags
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: item_tags_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: item_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tag
+                  type: VARCHAR
+        - createTable:
+            tableName: item_categories
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: item_categories_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: item_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: category
+                  type: VARCHAR
+        - createTable:
+            tableName: item_parameters
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: item_parameters_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: item_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: VARCHAR

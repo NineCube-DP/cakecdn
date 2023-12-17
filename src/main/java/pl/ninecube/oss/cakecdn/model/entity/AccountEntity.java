@@ -12,11 +12,12 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(value = AccessLevel.PACKAGE)
-public class AccountEntity {
+public class AccountEntity extends BaseEntity {
+
     @Id
-    @SequenceGenerator(name = "accounts_seq_generator", sequenceName = "accounts_seq", allocationSize = 1)
+    @SequenceGenerator(name = "accounts_seq_generator", sequenceName = "projects_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
-    private Long id;
+    protected Long id;
 
     private String username;
     private String password;

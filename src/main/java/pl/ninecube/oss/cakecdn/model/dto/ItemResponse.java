@@ -1,4 +1,4 @@
 package pl.ninecube.oss.cakecdn.model.dto;
 
-public class BucketResponse {
+public class ItemResponse {
 }

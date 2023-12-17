@@ -6,66 +6,65 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ninecube.oss.cakecdn.model.dto.*;
-import pl.ninecube.oss.cakecdn.service.ProjectService;
 import pl.ninecube.oss.cakecdn.service.StorageService;
-
-import java.io.InputStream;
 
 @RestController
 @RequestMapping("/storage")
 @RequiredArgsConstructor
-@Tag(name = "Managing files in project")
+@Tag(name = "Managing files and storages in projects")
 @SecurityRequirement(name = "basicAuth")
 public class StorageRestController {
 
     private final StorageService storageService;
 
-    @PostMapping("/bucket")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create new bucket")
-    public BucketResponse createNewBucket(@Valid @RequestBody BucketCreateDto dto) {
-        return storageService.createBucket(dto);
-    }
-
-    @GetMapping("/bucket/{bucketId}")
-    @Operation(summary = "Get bucket info by bucketId")
-    public BucketResponse getBucketMetadata(@PathVariable Long bucketId) {
-        return storageService.getBucketMetadata(bucketId);
-    }
-
-    @DeleteMapping("/bucket/{bucketId}")
-    @Operation(summary = "Delete bucket by id")
-    public void deleteProject(@PathVariable Long bucketId) {
-        storageService.deleteBucket(bucketId);
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Save new file")
-    public StorageResponse saveNewFile(@RequestParam Long bucketId,
-                                       @Valid @RequestBody StorageCreateDto dto,
-                                       @RequestParam("file") MultipartFile file) {
-        return storageService.saveFile(bucketId, dto, file);
+    @Operation(summary = "Create new storage")
+    public StorageResponse createNewBucket(@RequestParam Long projectId, @Valid @RequestBody StorageCreateDto dto) {
+        return storageService.createBucket(projectId, dto);
     }
 
     @GetMapping("/{storageId}")
-    @Operation(summary = "Get bytes of file by storageId")
-    public byte[] returnFile(@PathVariable Long storageId) {
-        return storageService.getFile(storageId);
-    }
-
-    @GetMapping("/{storageId}/metadata")
-    @Operation(summary = "Get bytes of file by storageId")
-    public StorageResponse readProject(@PathVariable Long storageId) {
-        return storageService.getFileMetadata(storageId);
+    @Operation(summary = "Get storage info by storageId")
+    public StorageResponse getBucketMetadata(@PathVariable Long storageId) {
+        return storageService.getBucketMetadata(storageId);
     }
 
     @DeleteMapping("/{storageId}")
+    @Operation(summary = "Delete storage by id")
+    public void deleteProject(@PathVariable Long storageId) {
+        storageService.deleteBucket(storageId);
+    }
+
+    // fixme - fix upload file with json
+    @PostMapping(value = "/item", consumes = {MediaType.MULTIPART_MIXED_VALUE})
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Save new file")
+    public ItemResponse saveNewFile(@RequestParam Long storageId,
+                                    @Valid @RequestPart ItemCreateDto dto,
+                                    @RequestPart("file") MultipartFile file) {
+        return storageService.saveFile(storageId, dto, file);
+    }
+
+    @GetMapping("/item/{itemId}")
+    @Operation(summary = "Get bytes of file by itemId")
+    public byte[] returnFile(@PathVariable Long itemId) {
+        return storageService.getFile(itemId);
+    }
+
+    @GetMapping("/item/{itemId}/metadata")
+    @Operation(summary = "Get bytes of file by itemId")
+    public ItemResponse readProject(@PathVariable Long itemId) {
+        return storageService.getFileMetadata(itemId);
+    }
+
+    @DeleteMapping("/{itemId}")
     @Operation(summary = "Delete project by id")
-    public void deleteProject(@RequestParam Long bucketId, @PathVariable Long storageId) {
-        storageService.deleteFile(storageId);
+    public void deleteProject(@RequestParam Long bucketId, @PathVariable Long itemId) {
+        storageService.deleteFile(bucketId, itemId);
     }
 }

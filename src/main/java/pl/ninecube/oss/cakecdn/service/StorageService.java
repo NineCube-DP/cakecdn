@@ -8,16 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ninecube.oss.cakecdn.exception.BusinessException;
 import pl.ninecube.oss.cakecdn.exception.TechnicalException;
-import pl.ninecube.oss.cakecdn.model.domain.Bucket;
+import pl.ninecube.oss.cakecdn.model.domain.Project;
 import pl.ninecube.oss.cakecdn.model.domain.Storage;
-import pl.ninecube.oss.cakecdn.model.dto.BucketCreateDto;
-import pl.ninecube.oss.cakecdn.model.dto.BucketResponse;
+import pl.ninecube.oss.cakecdn.model.domain.Item;
 import pl.ninecube.oss.cakecdn.model.dto.StorageCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
-import pl.ninecube.oss.cakecdn.model.entity.BucketEntity;
-import pl.ninecube.oss.cakecdn.model.mapper.BucketMapper;
-import pl.ninecube.oss.cakecdn.repository.BucketRepository;
+import pl.ninecube.oss.cakecdn.model.dto.ItemCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.ItemResponse;
+import pl.ninecube.oss.cakecdn.model.entity.ProjectEntity;
+import pl.ninecube.oss.cakecdn.model.entity.StorageEntity;
+import pl.ninecube.oss.cakecdn.model.mapper.ProjectMapper;
+import pl.ninecube.oss.cakecdn.model.mapper.StorageMapper;
+import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 import pl.ninecube.oss.cakecdn.repository.StorageRepository;
+import pl.ninecube.oss.cakecdn.repository.ItemRepository;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -29,32 +33,39 @@ import java.util.UUID;
 public class StorageService {
 
     private final MinioClient client;
-    private final BucketRepository bucketRepository;
     private final StorageRepository storageRepository;
-    private final BucketMapper bucketMapper;
+    private final ItemRepository itemRepository;
+    private final ProjectRepository projectRepository;
+    private final StorageMapper storageMapper;
+    private final ProjectMapper projectMapper;
 
     @SneakyThrows
-    public BucketResponse createBucket(BucketCreateDto dto) {
+    public StorageResponse createBucket(Long projectId, StorageCreateDto dto) {
         if (isBucketExist(dto.getName())) {
-            BucketEntity bucketEntity = bucketRepository.findByName(dto.getName())
+            StorageEntity storageEntity = storageRepository.findByName(dto.getName())
                     .orElseThrow(() -> new TechnicalException("Bucket not found"));
 
-            return bucketMapper.toResponse(bucketEntity);
+            return storageMapper.toResponse(storageEntity);
         }
 
-        Bucket bucket = Bucket.builder()
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(() -> new BusinessException("Project not found"));
+        Project project = projectMapper.toDomain(projectEntity);
+
+        Storage storage = Storage.builder()
                 .name(dto.getName())
+                .project(project)
                 .build();
 
         client.makeBucket(MakeBucketArgs.builder()
-                .bucket(bucket.getName())
+                .bucket(storage.getName())
                 .build());
 
-        BucketEntity bucketEntity = bucketMapper.toEntity(bucket);
+        StorageEntity storageEntity = storageMapper.toEntity(storage);
 
-        bucketRepository.save(bucketEntity);
+        storageRepository.save(storageEntity);
 
-        return bucketMapper.toResponse(bucketEntity);
+        return storageMapper.toResponse(storageEntity);
     }
 
     private boolean isBucketExist(String name) throws ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException, ServerException, XmlParserException {
@@ -63,49 +74,51 @@ public class StorageService {
                 .build());
     }
 
-    public BucketResponse getBucketMetadata(Long bucketId) {
-        BucketEntity bucketEntity = bucketRepository.findById(bucketId)
+    public StorageResponse getBucketMetadata(Long bucketId) {
+        StorageEntity storageEntity = storageRepository.findById(bucketId)
                 .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
-        return bucketMapper.toResponse(bucketEntity);
+        return storageMapper.toResponse(storageEntity);
     }
 
     @SneakyThrows
     public void deleteBucket(Long bucketId) {
-        BucketEntity bucketEntity = bucketRepository.findById(bucketId)
+        StorageEntity storageEntity = storageRepository.findById(bucketId)
                 .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
-        if (isBucketExist(bucketEntity.getName())) {
+        if (isBucketExist(storageEntity.getName())) {
             client.removeBucket(RemoveBucketArgs.builder()
-                    .bucket(bucketEntity.getName())
+                    .bucket(storageEntity.getName())
                     .build());
         }
 
-        bucketRepository.delete(bucketEntity);
+        storageRepository.delete(storageEntity);
     }
 
     @SneakyThrows
-    public StorageResponse saveFile(Long bucketId, StorageCreateDto dto, MultipartFile file) {
-        var bucketEntity = bucketRepository.findById(bucketId)
+    public ItemResponse saveFile(Long bucketId, ItemCreateDto dto, MultipartFile file) {
+        var storageEntity = storageRepository.findById(bucketId)
                 .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
-        var bucket = bucketMapper.toDomain(bucketEntity);
+        var storage = storageMapper.toDomain(storageEntity);
 
-        var storage = Storage.builder()
+        var item = Item.builder()
                 .fileName(dto.getFileName())
-                .originalFilename(file.getOriginalFilename())
+                .originalFileName(file.getOriginalFilename())
                 .contentType(file.getContentType())
+                .fileSize(file.getSize())
+                .storage(storage)
                 .uuid(UUID.randomUUID().toString())
                 .tags(dto.getTags())
                 .categories(dto.getCategories())
                 .parameters(dto.getParameters())
                 .build();
 
-        bucket.getFiles().add(storage);
+//        bucket.getFiles().add(storage);
 
-        if (isBucketExist(bucket.getName())) {
+        if (isBucketExist(storage.getName())) {
             client.putObject(PutObjectArgs.builder()
-                    .bucket(storage.getUuid())
+                    .bucket(item.getUuid())
                     .contentType(file.getContentType())
                     .stream(file.getInputStream(), file.getSize(), -1)
                     .build());
@@ -118,11 +131,11 @@ public class StorageService {
         return null;
     }
 
-    public StorageResponse getFileMetadata(Long storageId) {
+    public ItemResponse getFileMetadata(Long storageId) {
         return null;
     }
 
-    public void deleteFile(Long storageId) {
+    public void deleteFile(Long bucketId, Long storageId) {
 
     }
 }
