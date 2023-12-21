@@ -28,7 +28,7 @@ databaseChangeLog:
                   name: version
                   constraints:
                     nullable: true
-                  type: VARCHAR
+                  type: INT
               - column:
                   name: creation_time_stamp
                   constraints:
@@ -57,7 +57,7 @@ databaseChangeLog:
                   value: "$2y$10$YqpS0fUuHdCTo29CMrzYxuA2RvZOq6.h0Sls2EFX7RtNXkJeZDAtS"
               - column:
                   name: version
-                  value: '1'
+                  value: 1
               - column:
                   name: creation_time_stamp
                   value: now()
@@ -106,7 +106,7 @@ databaseChangeLog:
                   name: version
                   constraints:
                     nullable: true
-                  type: VARCHAR
+                  type: INT
               - column:
                   name: creation_time_stamp
                   constraints:
@@ -152,7 +152,7 @@ databaseChangeLog:
                   name: version
                   constraints:
                     nullable: true
-                  type: VARCHAR
+                  type: INT
               - column:
                   name: creation_time_stamp
                   constraints:
@@ -223,7 +223,7 @@ databaseChangeLog:
                   name: version
                   constraints:
                     nullable: true
-                  type: VARCHAR
+                  type: INT
               - column:
                   name: creation_time_stamp
                   constraints:
@@ -252,6 +252,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    foreignKeyName: items_pkey
+                    references: items(id)
                   name: item_id
                   type: BIGINT
               - column:
@@ -259,6 +261,7 @@ databaseChangeLog:
                     nullable: false
                   name: tag
                   type: VARCHAR
+
         - createTable:
             tableName: item_categories
             columns:
@@ -273,6 +276,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    foreignKeyName: items_pkey
+                    references: items(id)
                   name: item_id
                   type: BIGINT
               - column:
@@ -294,6 +299,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    foreignKeyName: items_pkey
+                    references: items(id)
                   name: item_id
                   type: BIGINT
               - column:

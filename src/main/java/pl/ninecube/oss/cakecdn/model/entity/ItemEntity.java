@@ -20,7 +20,7 @@ public class ItemEntity extends BaseEntity {
     @Id
     @SequenceGenerator(name = "items_seq_generator", sequenceName = "items_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_seq_generator")
-    protected Long id;
+    Long id;
 
     String fileName;
 
@@ -28,7 +28,7 @@ public class ItemEntity extends BaseEntity {
 
     String contentType;
 
-    long fileSize;
+    Long fileSize;
 
     String uuid;
     String url;

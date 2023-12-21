@@ -7,7 +7,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_storage:/var/lib/postgresql/data
+      - db_volume:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=UUcm3K4nT3MEFRmfRMj4
       - POSTGRES_USER=cake
@@ -20,12 +20,12 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - s3_storage:/data
+      - s3_volume:/data
     environment:
-      MINIO_ROOT_USER: cakecdn
+      MINIO_ROOT_USER: cake
       MINIO_ROOT_PASSWORD: sbmKVeCWHwd4fxbMqwuY
     command: server --console-address ":9001" /data
 
 volumes:
-  s3_storage:
-  db_storage:
+  s3_volume:
+  db_volume:

@@ -11,7 +11,11 @@ import pl.ninecube.oss.cakecdn.exception.TechnicalException;
 import pl.ninecube.oss.cakecdn.model.domain.Item;
 import pl.ninecube.oss.cakecdn.model.domain.Project;
 import pl.ninecube.oss.cakecdn.model.domain.Storage;
-import pl.ninecube.oss.cakecdn.model.dto.*;
+import pl.ninecube.oss.cakecdn.model.dto.ItemResponse;
+import pl.ninecube.oss.cakecdn.model.dto.ItemUpdateDto;
+import pl.ninecube.oss.cakecdn.model.dto.StorageCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
+import pl.ninecube.oss.cakecdn.model.entity.ItemEntity;
 import pl.ninecube.oss.cakecdn.model.entity.ProjectEntity;
 import pl.ninecube.oss.cakecdn.model.entity.StorageEntity;
 import pl.ninecube.oss.cakecdn.model.mapper.ItemMapper;
@@ -142,8 +146,19 @@ public class StorageService {
 
     }
 
-    public ItemResponse saveMetadata(Long itemId, ItemCreateDto dto) {
-        return null;
+    public ItemResponse saveMetadata(Long itemId, ItemUpdateDto dto) {
+        ItemEntity file = itemRepository.findById(itemId)
+                .orElseThrow(() -> new BusinessException("File not exist"));
+
+        Item domain = itemMapper.toDomain(file);
+
+        Item update = itemMapper.update(domain, dto);
+
+        ItemEntity entity = itemMapper.toEntity(update);
+
+        ItemEntity save = itemRepository.save(entity);
+
+        return itemMapper.toResponse(save);
     }
 
     public ItemResponse updateMetadata(Long itemId, ItemUpdateDto dto) {

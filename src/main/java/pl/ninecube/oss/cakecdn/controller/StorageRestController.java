@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.ninecube.oss.cakecdn.model.dto.*;
+import pl.ninecube.oss.cakecdn.model.dto.ItemResponse;
+import pl.ninecube.oss.cakecdn.model.dto.ItemUpdateDto;
+import pl.ninecube.oss.cakecdn.model.dto.StorageCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
 import pl.ninecube.oss.cakecdn.service.StorageService;
 
 @RestController
@@ -57,7 +60,7 @@ public class StorageRestController {
 
   @PostMapping("/item/{itemId}/metadata")
   @Operation(summary = "Save metadata for item by id")
-  public ItemResponse readProject(@PathVariable Long itemId, @Valid @RequestBody ItemCreateDto dto) {
+  public ItemResponse addItemMetadata(@PathVariable Long itemId, @Valid @RequestBody ItemUpdateDto dto) {
     return storageService.saveMetadata(itemId, dto);
   }
 
