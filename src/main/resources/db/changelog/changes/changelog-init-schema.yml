@@ -47,6 +47,9 @@ databaseChangeLog:
             tableName: accounts
             columns:
               - column:
+                  name: id
+                  value: '0'
+              - column:
                   name: username
                   value: "admin"
               - column:
@@ -54,19 +57,13 @@ databaseChangeLog:
                   value: "$2y$10$YqpS0fUuHdCTo29CMrzYxuA2RvZOq6.h0Sls2EFX7RtNXkJeZDAtS"
               - column:
                   name: version
-                  constraints:
-                    nullable: true
-                  type: VARCHAR
+                  value: '1'
               - column:
                   name: creation_time_stamp
-                  constraints:
-                    nullable: true
-                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+                  value: now()
               - column:
                   name: modification_time_stamp
-                  constraints:
-                    nullable: true
-                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+                  value: now()
   - changeSet:
       id: 'add projects schema'
       author: 'dpustula'
@@ -187,7 +184,7 @@ databaseChangeLog:
                   type: BIGINT
               - column:
                   constraints:
-                    nullable: false
+                    nullable: true
                   name: file_name
                   type: VARCHAR
               - column:
@@ -210,6 +207,11 @@ databaseChangeLog:
                     nullable: false
                   name: file_size
                   type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: url
+                  type: VARCHAR
               - column:
                   constraints:
                     nullable: false

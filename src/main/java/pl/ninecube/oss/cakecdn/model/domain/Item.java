@@ -16,6 +16,7 @@ public class Item {
     String contentType;
     String uuid;
     Storage storage;
+    String url;
     Set<String> tags;
     Set<String> categories;
     Map<String, String> parameters;

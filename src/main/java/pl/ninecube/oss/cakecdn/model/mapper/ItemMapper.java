@@ -16,5 +16,15 @@ public abstract class ItemMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract ItemEntity toEntity(Item item);
 
+    @Mapping(source = ".", target = "fileName", qualifiedByName = "itemNameMapper")
     public abstract ItemResponse toResponse(ItemEntity item);
+
+    @Named("itemNameMapper")
+    public String mapName(ItemEntity item) {
+        if (item.getFileName() == null || item.getFileName().isBlank()) {
+            return item.getOriginalFileName();
+        } else {
+            return item.getFileName();
+        }
+    }
 }

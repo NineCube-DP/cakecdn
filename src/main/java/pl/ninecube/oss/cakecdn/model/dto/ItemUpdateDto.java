@@ -12,7 +12,7 @@ import java.util.Set;
 @Builder
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ItemCreateDto {
+public class ItemUpdateDto {
     String fileName;
 
     Set<String> tags;

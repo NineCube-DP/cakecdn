@@ -31,6 +31,7 @@ public class ItemEntity extends BaseEntity {
     long fileSize;
 
     String uuid;
+    String url;
 
     @ManyToOne
     @JoinColumn(name = "storage_id")
