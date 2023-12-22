@@ -55,30 +55,33 @@ public class StorageRestController {
   @GetMapping("/item/{itemId}")
   @Operation(summary = "Get bytes of file by itemId")
   public byte[] returnFile(@PathVariable Long itemId) {
+    //todo return file name from metadata
     return storageService.getFile(itemId);
   }
 
-  @PostMapping("/item/{itemId}/metadata")
-  @Operation(summary = "Save metadata for item by id")
-  public ItemResponse addItemMetadata(@PathVariable Long itemId, @Valid @RequestBody ItemUpdateDto dto) {
-    return storageService.saveMetadata(itemId, dto);
+  @GetMapping("/{storageName}/{itemUuid}")
+  @Operation(summary = "Get bytes of file by itemId")
+  public byte[] returnFileFullPath(@PathVariable String storageName, @PathVariable String itemUuid) {
+    //todo return file name from metadata
+    return storageService.getFile(storageName, itemUuid);
+  }
+
+  @DeleteMapping("/item/{itemId}")
+  @Operation(summary = "Delete file by itemId")
+  public void deleteFile(@PathVariable Long itemId) {
+    storageService.deleteFile(itemId);
   }
 
   @GetMapping("/item/{itemId}/metadata")
-  @Operation(summary = "Get bytes of file by itemId")
-  public ItemResponse readProject(@PathVariable Long itemId) {
+  @Operation(summary = "Get file metadata by itemId")
+  public ItemResponse readItemMetadata(@PathVariable Long itemId) {
     return storageService.getFileMetadata(itemId);
   }
 
   @PutMapping("/item/{itemId}/metadata")
-  @Operation(summary = "Get bytes of file by itemId")
-  public ItemResponse readProject(@PathVariable Long itemId, @Valid @RequestBody ItemUpdateDto dto) {
+  @Operation(summary = "Update file metadata by itemId")
+  public ItemResponse updateItemMetadata(@PathVariable Long itemId,
+                                         @Valid @RequestBody ItemUpdateDto dto) {
     return storageService.updateMetadata(itemId, dto);
-  }
-
-  @DeleteMapping("/{itemId}")
-  @Operation(summary = "Delete project by id")
-  public void deleteProject(@RequestParam Long bucketId, @PathVariable Long itemId) {
-    storageService.deleteFile(bucketId, itemId);
   }
 }

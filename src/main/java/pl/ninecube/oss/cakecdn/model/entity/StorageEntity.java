@@ -3,8 +3,6 @@ package pl.ninecube.oss.cakecdn.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @Entity
 @Getter
 @Builder
@@ -24,7 +22,4 @@ public class StorageEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "project_id")
     ProjectEntity project;
-
-//    @OneToMany(mappedBy = "storage")
-//    Set<ItemEntity> files;
 }

@@ -34,134 +34,156 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StorageService {
 
-    private final MinioClient client;
-    private final StorageRepository storageRepository;
-    private final ItemRepository itemRepository;
-    private final ItemMapper itemMapper;
-    private final ProjectRepository projectRepository;
-    private final StorageMapper storageMapper;
-    private final ProjectMapper projectMapper;
+  private final MinioClient client;
+  private final StorageRepository storageRepository;
+  private final ItemRepository itemRepository;
+  private final ItemMapper itemMapper;
+  private final ProjectRepository projectRepository;
+  private final StorageMapper storageMapper;
+  private final ProjectMapper projectMapper;
 
-    @SneakyThrows
-    public StorageResponse createBucket(Long projectId, StorageCreateDto dto) {
-        if (isBucketExist(dto.getName())) {
-            StorageEntity storageEntity = storageRepository.findByName(dto.getName())
-                    .orElseThrow(() -> new TechnicalException("Bucket not found"));
+  @SneakyThrows
+  public StorageResponse createBucket(Long projectId, StorageCreateDto dto) {
+    if (isBucketExist(dto.getName())) {
+      StorageEntity storageEntity = storageRepository.findByName(dto.getName())
+              .orElseThrow(() -> new TechnicalException("Bucket not found"));
 
-            return storageMapper.toResponse(storageEntity);
-        }
-
-        ProjectEntity projectEntity = projectRepository.findById(projectId)
-                .orElseThrow(() -> new BusinessException("Project not found"));
-        Project project = projectMapper.toDomain(projectEntity);
-
-        Storage storage = Storage.builder()
-                .name(dto.getName())
-                .project(project)
-                .build();
-
-        client.makeBucket(MakeBucketArgs.builder()
-                .bucket(storage.getName())
-                .build());
-
-        StorageEntity storageEntity = storageMapper.toEntity(storage);
-
-        storageRepository.save(storageEntity);
-
-        return storageMapper.toResponse(storageEntity);
+      return storageMapper.toResponse(storageEntity);
     }
 
-    private boolean isBucketExist(String name) throws ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException, ServerException, XmlParserException {
-        return client.bucketExists(BucketExistsArgs.builder()
-                .bucket(name)
-                .build());
+    ProjectEntity projectEntity = projectRepository.findById(projectId)
+            .orElseThrow(() -> new BusinessException("Project not found"));
+    Project project = projectMapper.toDomain(projectEntity);
+
+    Storage storage = Storage.builder()
+            .name(dto.getName())
+            .project(project)
+            .build();
+
+    client.makeBucket(MakeBucketArgs.builder()
+            .bucket(storage.getName())
+            .build());
+
+    StorageEntity storageEntity = storageMapper.toEntity(storage);
+
+    storageRepository.save(storageEntity);
+
+    return storageMapper.toResponse(storageEntity);
+  }
+
+  private boolean isBucketExist(String name) throws ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException, ServerException, XmlParserException {
+    return client.bucketExists(BucketExistsArgs.builder()
+            .bucket(name)
+            .build());
+  }
+
+  public StorageResponse getBucketMetadata(Long bucketId) {
+    StorageEntity storageEntity = storageRepository.findById(bucketId)
+            .orElseThrow(() -> new BusinessException("Bucket not exist"));
+
+    return storageMapper.toResponse(storageEntity);
+  }
+
+  @SneakyThrows
+  public void deleteBucket(Long bucketId) {
+    StorageEntity storageEntity = storageRepository.findById(bucketId)
+            .orElseThrow(() -> new BusinessException("Bucket not exist"));
+
+    if (isBucketExist(storageEntity.getName())) {
+      client.removeBucket(RemoveBucketArgs.builder()
+              .bucket(storageEntity.getName())
+              .build());
     }
 
-    public StorageResponse getBucketMetadata(Long bucketId) {
-        StorageEntity storageEntity = storageRepository.findById(bucketId)
-                .orElseThrow(() -> new BusinessException("Bucket not exist"));
+    storageRepository.delete(storageEntity);
+  }
 
-        return storageMapper.toResponse(storageEntity);
+  @SneakyThrows
+  public ItemResponse saveFile(Long bucketId, MultipartFile file) {
+    var storageEntity = storageRepository.findById(bucketId)
+            .orElseThrow(() -> new BusinessException("Bucket not exist"));
+
+    var storage = storageMapper.toDomain(storageEntity);
+    var uuid = UUID.randomUUID().toString();
+    var item = Item.builder()
+            .originalFileName(file.getOriginalFilename())
+            .contentType(file.getContentType())
+            .fileSize(file.getSize())
+            .storage(storage)
+            .uuid(uuid)
+            .url(storage.getProject().getBaseUrl() + "/storage/" + storage.getName() + "/" + uuid)
+            .build();
+
+    if (isBucketExist(storage.getName())) {
+      client.putObject(PutObjectArgs.builder()
+              .object(item.getUuid())
+              .bucket(item.getStorage().getName())
+              .contentType(file.getContentType())
+              .stream(file.getInputStream(), file.getSize(), -1)
+              .build());
     }
 
-    @SneakyThrows
-    public void deleteBucket(Long bucketId) {
-        StorageEntity storageEntity = storageRepository.findById(bucketId)
-                .orElseThrow(() -> new BusinessException("Bucket not exist"));
+    var entity = itemRepository.save(itemMapper.toEntity(item));
 
-        if (isBucketExist(storageEntity.getName())) {
-            client.removeBucket(RemoveBucketArgs.builder()
-                    .bucket(storageEntity.getName())
-                    .build());
-        }
+    return itemMapper.toResponse(entity);
+  }
 
-        storageRepository.delete(storageEntity);
-    }
+  @SneakyThrows
+  public byte[] getFile(Long itemId) {
+    ItemEntity file = itemRepository.findById(itemId)
+            .orElseThrow(() -> new BusinessException("File not exist"));
 
-    @SneakyThrows
-    public ItemResponse saveFile(Long bucketId, MultipartFile file) {
-        var storageEntity = storageRepository.findById(bucketId)
-                .orElseThrow(() -> new BusinessException("Bucket not exist"));
+    return client.getObject(GetObjectArgs.builder()
+            .bucket(file.getStorage().getName())
+            .object(file.getUuid())
+            .build()).readAllBytes();
+  }
 
-        var storage = storageMapper.toDomain(storageEntity);
-        var uuid = UUID.randomUUID().toString();
-        var item = Item.builder()
-//                .fileName(dto.getFileName())
-                .originalFileName(file.getOriginalFilename())
-                .contentType(file.getContentType())
-                .fileSize(file.getSize())
-                .storage(storage)
-                .uuid(uuid)
-                .url(storage.getProject().getBaseUrl() + "/" + storage.getName() + "/" + uuid)
-//                .tags(dto.getTags())
-//                .categories(dto.getCategories())
-//                .parameters(dto.getParameters())
-                .build();
+  @SneakyThrows
+  public byte[] getFile(String storageName, String itemUuid) {
+    ItemEntity file = itemRepository.findByStorageNameAndUuid(storageName, itemUuid)
+            .orElseThrow(() -> new BusinessException("File not exist"));
 
-//        bucket.getFiles().add(storage);
+    return client.getObject(GetObjectArgs.builder()
+            .bucket(file.getStorage().getName())
+            .object(file.getUuid())
+            .build()).readAllBytes();
+  }
 
-        if (isBucketExist(storage.getName())) {
-            client.putObject(PutObjectArgs.builder()
-                    .object(item.getUuid())
-                    .bucket(item.getStorage().getName())
-                    .contentType(file.getContentType())
-                    .stream(file.getInputStream(), file.getSize(), -1)
-                    .build());
-        }
+  public ItemResponse getFileMetadata(Long itemId) {
+    ItemEntity file = itemRepository.findById(itemId)
+            .orElseThrow(() -> new BusinessException("File not exist"));
 
-        var entity = itemRepository.save(itemMapper.toEntity(item));
+    return itemMapper.toResponse(file);
+  }
 
-        return itemMapper.toResponse(entity);
-    }
+  @SneakyThrows
+  public void deleteFile(Long itemId) {
+    ItemEntity file = itemRepository.findById(itemId)
+            .orElseThrow(() -> new BusinessException("File not exist"));
 
-    public byte[] getFile(Long storageId) {
-        return null;
-    }
+    client.removeObject(RemoveObjectArgs.builder()
+            .bucket(file.getStorage().getName())
+            .object(file.getUuid())
+            .build());
 
-    public ItemResponse getFileMetadata(Long storageId) {
-        return null;
-    }
+    itemRepository.deleteById(itemId);
+  }
 
-    public void deleteFile(Long bucketId, Long storageId) {
+  public ItemResponse updateMetadata(Long itemId, ItemUpdateDto dto) {
+    ItemEntity file = itemRepository.findById(itemId)
+            .orElseThrow(() -> new BusinessException("File not exist"));
 
-    }
+    Item domain = itemMapper.toDomain(file);
 
-    public ItemResponse saveMetadata(Long itemId, ItemUpdateDto dto) {
-        ItemEntity file = itemRepository.findById(itemId)
-                .orElseThrow(() -> new BusinessException("File not exist"));
+    Item update = itemMapper.update(domain, dto);
 
-        Item domain = itemMapper.toDomain(file);
+    ItemEntity entity = itemMapper.toEntity(update);
 
-        Item update = itemMapper.update(domain, dto);
+    ItemEntity save = itemRepository.save(entity);
 
-        ItemEntity entity = itemMapper.toEntity(update);
+    return itemMapper.toResponse(save);
+  }
 
-        ItemEntity save = itemRepository.save(entity);
 
-        return itemMapper.toResponse(save);
-    }
-
-    public ItemResponse updateMetadata(Long itemId, ItemUpdateDto dto) {
-        return null;
-    }
 }
