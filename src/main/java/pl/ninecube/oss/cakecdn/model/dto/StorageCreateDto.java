@@ -11,6 +11,5 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StorageCreateDto {
-    @NotEmpty
-    String name;
+  @NotEmpty String name;
 }

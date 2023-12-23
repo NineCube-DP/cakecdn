@@ -14,14 +14,17 @@ import java.util.List;
 @Setter(value = AccessLevel.PACKAGE)
 public class AccountEntity extends BaseEntity {
 
-    @Id
-    @SequenceGenerator(name = "accounts_seq_generator", sequenceName = "projects_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
-    protected Long id;
+  @Id
+  @SequenceGenerator(
+          name = "accounts_seq_generator",
+          sequenceName = "projects_seq",
+          allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
+  protected Long id;
 
-    private String username;
-    private String password;
+  private String username;
+  private String password;
 
-    @OneToMany(mappedBy = "owner")
-    private List<ProjectEntity> projects;
+  @OneToMany(mappedBy = "owner")
+  private List<ProjectEntity> projects;
 }

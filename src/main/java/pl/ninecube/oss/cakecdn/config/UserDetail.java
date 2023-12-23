@@ -13,15 +13,17 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"!integration"})
+@Profile("!integration")
 public class UserDetail implements UserDetailsService {
-    private final AccountRepository accountRepository;
+  private final AccountRepository accountRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not exists by Username"));
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    var account =
+            accountRepository
+                    .findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not exists by Username"));
 
-        return new User(username, account.getPassword(), Collections.emptyList());
-    }
+    return new User(username, account.getPassword(), Collections.emptyList());
+  }
 }

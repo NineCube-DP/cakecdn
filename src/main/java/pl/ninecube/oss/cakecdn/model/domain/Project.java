@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class Project {
-    Long id;
-    Account owner;
+  Long id;
+  Account owner;
 
-    String name;
-    String baseUrl;
-    boolean enabled;
+  String name;
+  String baseUrl;
+  boolean enabled;
 }

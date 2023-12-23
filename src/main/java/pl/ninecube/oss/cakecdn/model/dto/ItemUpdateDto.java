@@ -13,9 +13,9 @@ import java.util.Set;
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemUpdateDto {
-    String fileName;
+  String fileName;
 
-    Set<String> tags;
-    Set<String> categories;
-    Map<String, String> parameters;
+  Set<String> tags;
+  Set<String> categories;
+  Map<String, String> parameters;
 }

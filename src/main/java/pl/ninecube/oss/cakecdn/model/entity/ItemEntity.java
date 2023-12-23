@@ -17,42 +17,42 @@ import java.util.Set;
 @Setter(value = AccessLevel.PACKAGE)
 public class ItemEntity extends BaseEntity {
 
-    @Id
-    @SequenceGenerator(name = "items_seq_generator", sequenceName = "items_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_seq_generator")
-    Long id;
+  @Id
+  @SequenceGenerator(name = "items_seq_generator", sequenceName = "items_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "items_seq_generator")
+  Long id;
 
-    String fileName;
+  String fileName;
 
-    String originalFileName;
+  String originalFileName;
 
-    String contentType;
+  String contentType;
 
-    Long fileSize;
+  Long fileSize;
 
-    String uuid;
-    String url;
+  String uuid;
+  String url;
 
-    @ManyToOne
-    @JoinColumn(name = "storage_id")
-    StorageEntity storage;
+  @ManyToOne
+  @JoinColumn(name = "storage_id")
+  StorageEntity storage;
 
-    @Builder.Default
-    @Column(name = "tag", nullable = false)
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "item_tags", joinColumns = @JoinColumn(name = "item_id"))
-    Set<String> tags = new HashSet<>();
+  @Builder.Default
+  @Column(name = "tag", nullable = false)
+  @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+  @CollectionTable(name = "item_tags", joinColumns = @JoinColumn(name = "item_id"))
+  Set<String> tags = new HashSet<>();
 
-    @Builder.Default
-    @Column(name = "category", nullable = false)
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
-    Set<String> categories = new HashSet<>();
+  @Builder.Default
+  @Column(name = "category", nullable = false)
+  @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+  @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
+  Set<String> categories = new HashSet<>();
 
-    @Builder.Default
-    @ElementCollection
-    @MapKeyColumn(name="name")
-    @Column(name="value")
-    @CollectionTable(name = "item_parameters", joinColumns = @JoinColumn(name = "item_id"))
-    Map<String, String> parameters = new HashMap<>();
+  @Builder.Default
+  @ElementCollection
+  @MapKeyColumn(name = "name")
+  @Column(name = "value")
+  @CollectionTable(name = "item_parameters", joinColumns = @JoinColumn(name = "item_id"))
+  Map<String, String> parameters = new HashMap<>();
 }

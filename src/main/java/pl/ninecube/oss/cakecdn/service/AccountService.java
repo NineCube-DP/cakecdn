@@ -13,34 +13,38 @@ import pl.ninecube.oss.cakecdn.repository.AccountRepository;
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final AccountRepository accountRepository;
-    private final AccountMapper accountMapper;
+  private final AccountRepository accountRepository;
+  private final AccountMapper accountMapper;
 
-    public AccountResponse saveAccount(AccountCreateDto dto) {
-        var account = accountMapper.toDomain(dto);
-        var entity = accountRepository.save(accountMapper.toEntity(account));
+  public AccountResponse saveAccount(AccountCreateDto dto) {
+    var account = accountMapper.toDomain(dto);
+    var entity = accountRepository.save(accountMapper.toEntity(account));
 
-        return accountMapper.toResponse(entity);
-    }
+    return accountMapper.toResponse(entity);
+  }
 
-    public AccountResponse getAccountById(Long accountId) {
-        var entity = accountRepository.findById(accountId)
-                .orElseThrow(() -> new BusinessException("Account not found"));
-        return accountMapper.toResponse(entity);
-    }
+  public AccountResponse getAccountById(Long accountId) {
+    var entity =
+            accountRepository
+                    .findById(accountId)
+                    .orElseThrow(() -> new BusinessException("Account not found"));
+    return accountMapper.toResponse(entity);
+  }
 
-    public AccountResponse updateAccountById(Long accountId, AccountUpdateDto dto) {
-        var entity = accountRepository.findById(accountId)
-                .orElseThrow(() -> new BusinessException("Account not found"));
+  public AccountResponse updateAccountById(Long accountId, AccountUpdateDto dto) {
+    var entity =
+            accountRepository
+                    .findById(accountId)
+                    .orElseThrow(() -> new BusinessException("Account not found"));
 
-        var updated = accountMapper.update(accountMapper.toDomain(entity), dto);
+    var updated = accountMapper.update(accountMapper.toDomain(entity), dto);
 
-        var updatedEntity = accountRepository.save(accountMapper.toEntity(updated));
+    var updatedEntity = accountRepository.save(accountMapper.toEntity(updated));
 
-        return accountMapper.toResponse(updatedEntity);
-    }
+    return accountMapper.toResponse(updatedEntity);
+  }
 
-    public void deleteAccount(Long accountId) {
-        accountRepository.deleteById(accountId);
-    }
+  public void deleteAccount(Long accountId) {
+    accountRepository.deleteById(accountId);
+  }
 }

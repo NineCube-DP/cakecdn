@@ -27,7 +27,8 @@ public class StorageRestController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create new storage")
-  public StorageResponse createNewBucket(@RequestParam Long projectId, @Valid @RequestBody StorageCreateDto dto) {
+  public StorageResponse createNewBucket(
+          @RequestParam Long projectId, @Valid @RequestBody StorageCreateDto dto) {
     return storageService.createBucket(projectId, dto);
   }
 
@@ -47,22 +48,23 @@ public class StorageRestController {
   @PostMapping(value = "/item", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Save new file")
-  public ItemResponse saveNewFile(@RequestParam Long storageId,
-                                  @RequestPart(value = "file") MultipartFile file) {
+  public ItemResponse saveNewFile(
+          @RequestParam Long storageId, @RequestPart(value = "file") MultipartFile file) {
     return storageService.saveFile(storageId, file);
   }
 
   @GetMapping("/item/{itemId}")
   @Operation(summary = "Get bytes of file by itemId")
   public byte[] returnFile(@PathVariable Long itemId) {
-    //todo return file name from metadata
+    // todo return file name from metadata
     return storageService.getFile(itemId);
   }
 
   @GetMapping("/{storageName}/{itemUuid}")
   @Operation(summary = "Get bytes of file by itemId")
-  public byte[] returnFileFullPath(@PathVariable String storageName, @PathVariable String itemUuid) {
-    //todo return file name from metadata
+  public byte[] returnFileFullPath(
+          @PathVariable String storageName, @PathVariable String itemUuid) {
+    // todo return file name from metadata
     return storageService.getFile(storageName, itemUuid);
   }
 
@@ -80,8 +82,8 @@ public class StorageRestController {
 
   @PutMapping("/item/{itemId}/metadata")
   @Operation(summary = "Update file metadata by itemId")
-  public ItemResponse updateItemMetadata(@PathVariable Long itemId,
-                                         @Valid @RequestBody ItemUpdateDto dto) {
+  public ItemResponse updateItemMetadata(
+          @PathVariable Long itemId, @Valid @RequestBody ItemUpdateDto dto) {
     return storageService.updateMetadata(itemId, dto);
   }
 }

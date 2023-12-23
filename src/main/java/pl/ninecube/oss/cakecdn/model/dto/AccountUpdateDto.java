@@ -10,6 +10,6 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountUpdateDto {
-    String username;
-    String password;
+  String username;
+  String password;
 }

@@ -8,6 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Value
 public class AccountResponse {
-    Long id;
-    String username;
+  Long id;
+  String username;
 }

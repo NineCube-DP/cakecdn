@@ -9,8 +9,7 @@ import pl.ninecube.oss.cakecdn.model.entity.ItemEntity;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR,
-        uses = StorageMapper.class
-)
+        uses = StorageMapper.class)
 public abstract class ItemMapper {
   public abstract Item toDomain(ItemEntity entity);
 
@@ -38,6 +37,4 @@ public abstract class ItemMapper {
       return item.getFileName();
     }
   }
-
-
 }

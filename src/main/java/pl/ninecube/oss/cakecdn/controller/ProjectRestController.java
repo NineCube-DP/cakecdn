@@ -7,8 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import pl.ninecube.oss.cakecdn.model.dto.*;
-import pl.ninecube.oss.cakecdn.service.AccountService;
+import pl.ninecube.oss.cakecdn.model.dto.ProjectCreateDto;
+import pl.ninecube.oss.cakecdn.model.dto.ProjectResponse;
+import pl.ninecube.oss.cakecdn.model.dto.ProjectUpdateDto;
 import pl.ninecube.oss.cakecdn.service.ProjectService;
 
 @RestController
@@ -18,30 +19,31 @@ import pl.ninecube.oss.cakecdn.service.ProjectService;
 @SecurityRequirement(name = "basicAuth")
 public class ProjectRestController {
 
-    private final ProjectService projectService;
+  private final ProjectService projectService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Save new project")
-    public ProjectResponse createProject(@Valid @RequestBody ProjectCreateDto dto) {
-        return projectService.createProject(dto);
-    }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Save new project")
+  public ProjectResponse createProject(@Valid @RequestBody ProjectCreateDto dto) {
+    return projectService.createProject(dto);
+  }
 
-    @GetMapping("/{projectId}")
-    @Operation(summary = "Get project by id")
-    public ProjectResponse readProject(@PathVariable Long projectId) {
-        return projectService.getProjectById(projectId);
-    }
+  @GetMapping("/{projectId}")
+  @Operation(summary = "Get project by id")
+  public ProjectResponse readProject(@PathVariable Long projectId) {
+    return projectService.getProjectById(projectId);
+  }
 
-    @PutMapping("/{projectId}")
-    @Operation(summary = "Update project data by id")
-    public ProjectResponse updateProject(@PathVariable Long projectId, @RequestBody ProjectUpdateDto dto) {
-        return projectService.updateProjectById(projectId, dto);
-    }
+  @PutMapping("/{projectId}")
+  @Operation(summary = "Update project data by id")
+  public ProjectResponse updateProject(
+          @PathVariable Long projectId, @RequestBody ProjectUpdateDto dto) {
+    return projectService.updateProjectById(projectId, dto);
+  }
 
-    @DeleteMapping("/{projectId}")
-    @Operation(summary = "Delete project by id")
-    public void deleteProject(@PathVariable Long projectId) {
-        projectService.deleteProjectById(projectId);
-    }
+  @DeleteMapping("/{projectId}")
+  @Operation(summary = "Delete project by id")
+  public void deleteProject(@PathVariable Long projectId) {
+    projectService.deleteProjectById(projectId);
+  }
 }

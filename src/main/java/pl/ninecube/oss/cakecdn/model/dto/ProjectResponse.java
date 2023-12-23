@@ -8,8 +8,8 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Value
 public class ProjectResponse {
-    Long id;
-    String name;
-    String baseUrl;
-    boolean enabled;
+  Long id;
+  String name;
+  String baseUrl;
+  boolean enabled;
 }

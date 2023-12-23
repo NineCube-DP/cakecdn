@@ -12,14 +12,17 @@ import lombok.*;
 @Setter(value = AccessLevel.PACKAGE)
 public class StorageEntity extends BaseEntity {
 
-    @Id
-    @SequenceGenerator(name = "storages_seq_generator", sequenceName = "storages_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "storages_seq_generator")
-    protected Long id;
+  @Id
+  @SequenceGenerator(
+          name = "storages_seq_generator",
+          sequenceName = "storages_seq",
+          allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "storages_seq_generator")
+  protected Long id;
 
-    String name;
+  String name;
 
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    ProjectEntity project;
+  @ManyToOne
+  @JoinColumn(name = "project_id")
+  ProjectEntity project;
 }

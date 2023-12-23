@@ -10,6 +10,6 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectCreateDto {
-    String name;
-    String baseUrl;
+  String name;
+  String baseUrl;
 }

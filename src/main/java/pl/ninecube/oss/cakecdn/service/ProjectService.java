@@ -25,8 +25,10 @@ public class ProjectService {
     public ProjectResponse createProject(ProjectCreateDto dto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        var accountEntity = accountRepository.findByUsername(auth.getName())
-                .orElseThrow(() -> new BusinessException("User not exists by Username"));
+        var accountEntity =
+                accountRepository
+                        .findByUsername(auth.getName())
+                        .orElseThrow(() -> new BusinessException("User not exists by Username"));
 
         var project = projectMapper.toDomain(dto);
         project.setOwner(accountMapper.toDomain(accountEntity));
@@ -39,14 +41,18 @@ public class ProjectService {
     }
 
     public ProjectResponse getProjectById(Long projectId) {
-        var entity = projectRepository.findById(projectId)
-                .orElseThrow(() -> new BusinessException("Account not found"));
+        var entity =
+                projectRepository
+                        .findById(projectId)
+                        .orElseThrow(() -> new BusinessException("Account not found"));
         return projectMapper.toResponse(entity);
     }
 
     public ProjectResponse updateProjectById(Long projectId, ProjectUpdateDto dto) {
-        var entity = projectRepository.findById(projectId)
-                .orElseThrow(() -> new BusinessException("Account not found"));
+        var entity =
+                projectRepository
+                        .findById(projectId)
+                        .orElseThrow(() -> new BusinessException("Account not found"));
 
         var updated = projectMapper.update(projectMapper.toDomain(entity), dto);
 

@@ -10,7 +10,7 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectUpdateDto {
-    String name;
-    String baseUrl;
-    boolean enabled;
+  String name;
+  String baseUrl;
+  boolean enabled;
 }

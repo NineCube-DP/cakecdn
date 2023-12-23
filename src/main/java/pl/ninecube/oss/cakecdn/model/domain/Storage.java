@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 @Builder
 public class Storage {
-    Long id;
+  Long id;
 
-    String name;
+  String name;
 
-    Project project;
+  Project project;
 
-//    @Setter(AccessLevel.NONE)
-//    Set<Item> files;
+  //    @Setter(AccessLevel.NONE)
+  //    Set<Item> files;
 }

@@ -8,9 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "minio")
 public class MinioProperties {
-    private final String endpoint;
-    private final boolean enabled;
-    private final MinioCredentials credentials;
-
+  private final String endpoint;
+  private final boolean enabled;
+  private final MinioCredentials credentials;
 }
-

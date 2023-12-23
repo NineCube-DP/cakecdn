@@ -8,6 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Value
 public class StorageResponse {
-    Long id;
-    String name;
+  Long id;
+  String name;
 }

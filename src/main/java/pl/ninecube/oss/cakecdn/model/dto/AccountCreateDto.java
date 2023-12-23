@@ -6,15 +6,12 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-
 @Jacksonized
 @Builder
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountCreateDto {
-    @NotNull
-    String username;
+  @NotNull String username;
 
-    @NotNull
-    String password;
+  @NotNull String password;
 }

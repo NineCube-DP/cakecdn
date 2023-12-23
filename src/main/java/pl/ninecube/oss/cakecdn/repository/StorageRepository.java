@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface StorageRepository extends CrudRepository<StorageEntity, Long> {
-    Optional<StorageEntity> findByName(String bucketName);
+  Optional<StorageEntity> findByName(String bucketName);
 }

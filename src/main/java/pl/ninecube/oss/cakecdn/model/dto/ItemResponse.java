@@ -13,17 +13,17 @@ import java.util.Set;
 @Jacksonized
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemResponse {
-    Long id;
+  Long id;
 
-    String fileName;
-    String originalFileName;
-    String contentType;
-    long fileSize;
+  String fileName;
+  String originalFileName;
+  String contentType;
+  long fileSize;
 
-    String uuid;
-    String url;
+  String uuid;
+  String url;
 
-    Set<String> tags;
-    Set<String> categories;
-    Map<String, String> parameters;
+  Set<String> tags;
+  Set<String> categories;
+  Map<String, String> parameters;
 }
