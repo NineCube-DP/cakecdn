@@ -1,3 +1,20 @@
 spring:
   liquibase:
     change-log: classpath:/db/changelog/master.yml
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5000KB
+      max-request-size: 5000KB
+  datasource:
+    url: jdbc:postgresql://db:5432/cakecdn_db
+    username: cake
+    password: UUcm3K4nT3MEFRmfRMj4
+
+minio:
+  enabled: true
+  endpoint: http://s3:9000
+  credentials:
+    accessKey: cake
+    secretKey: sbmKVeCWHwd4fxbMqwuY

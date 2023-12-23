@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cakecdn:latest
+    ports:
+      - "8080:8080"
   db:
     image: postgres:16.1-alpine3.18
     restart: unless-stopped

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM eclipse-temurin:17-jdk-alpine as build
+FROM eclipse-temurin:21-jdk-alpine as build
 WORKDIR /workspace/app
 
 COPY mvnw .
@@ -7,10 +7,10 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests -Dspotless.check.skip=true
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 RUN addgroup -S cake && adduser -S cake -G cake
 USER cake
 VOLUME /tmp
