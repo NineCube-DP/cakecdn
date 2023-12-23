@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,9 @@ class StorageRestControllerIT extends BaseIntegrationTest implements MinioIntegr
     var sample = createSampleStorage();
 
     var result =
-            mvc.perform(get("/storage/{id}", sample.getId()).with(httpBasic("test", "password")))
+            mvc.perform(
+                            get("/storage/{id}", sample.getId())
+                                    .with(httpBasic("test", "password")))
                     .andExpect(status().isOk())
                     .andReturn();
 

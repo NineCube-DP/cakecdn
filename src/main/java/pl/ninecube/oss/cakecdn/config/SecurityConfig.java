@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;

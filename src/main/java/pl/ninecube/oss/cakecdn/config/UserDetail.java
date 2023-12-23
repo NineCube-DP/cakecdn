@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.config;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,8 @@ public class UserDetail implements UserDetailsService {
     var account =
             accountRepository
                     .findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not exists by Username"));
+                    .orElseThrow(
+                            () -> new UsernameNotFoundException("User not exists by Username"));
 
     return new User(username, account.getPassword(), Collections.emptyList());
   }

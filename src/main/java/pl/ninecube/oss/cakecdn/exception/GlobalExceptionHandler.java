@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.exception;
 
 import org.springframework.http.HttpStatus;

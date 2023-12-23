@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import lombok.RequiredArgsConstructor;
@@ -73,14 +74,16 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
     var saved =
             projectRepository.save(
                     ProjectEntity.builder()
-                .owner(account)
-                .name(faker.pokemon().name())
-                .baseUrl(faker.internet().url())
-                .enabled(false)
-                .build());
+                            .owner(account)
+                            .name(faker.pokemon().name())
+                            .baseUrl(faker.internet().url())
+                            .enabled(false)
+                            .build());
 
     var result =
-            mvc.perform(get("/project/{id}", saved.getId()).with(httpBasic("admin", "password")))
+            mvc.perform(
+                            get("/project/{id}", saved.getId())
+                                    .with(httpBasic("admin", "password")))
                     .andExpect(status().isOk())
                     .andReturn();
 

@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.config;
 
 import io.minio.MinioClient;
@@ -11,13 +12,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationPropertiesScan
 public class MinioConfig {
 
-  @Bean
-  @ConditionalOnProperty(name = "minio.enabled", havingValue = "true")
-  MinioClient createClient(@NotNull MinioProperties properties) {
-    return MinioClient.builder()
-            .endpoint(properties.getEndpoint())
-            .credentials(
-                    properties.getCredentials().getAccessKey(), properties.getCredentials().getSecretKey())
-            .build();
-  }
+    @Bean
+    @ConditionalOnProperty(name = "minio.enabled", havingValue = "true")
+    MinioClient createClient(@NotNull MinioProperties properties) {
+        return MinioClient.builder()
+                .endpoint(properties.getEndpoint())
+                .credentials(
+                        properties.getCredentials().getAccessKey(),
+                        properties.getCredentials().getSecretKey())
+                .build();
+    }
 }

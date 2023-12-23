@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn;
 
 import lombok.RequiredArgsConstructor;

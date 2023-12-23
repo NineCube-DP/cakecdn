@@ -1,3 +1,4 @@
+/* (C)2023 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,12 +97,14 @@ class AccountRestControllerIT extends BaseIntegrationTest {
     var saved =
             accountRepository.save(
                     AccountEntity.builder()
-                .username(faker.name().username())
-                .password(faker.internet().password())
-                .build());
+                            .username(faker.name().username())
+                            .password(faker.internet().password())
+                            .build());
 
     var result =
-            mvc.perform(get("/account/{id}", saved.getId()).with(httpBasic("admin", "password")))
+            mvc.perform(
+                            get("/account/{id}", saved.getId())
+                                    .with(httpBasic("admin", "password")))
                     .andExpect(status().isOk())
                     .andReturn();
 
