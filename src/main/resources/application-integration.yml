@@ -1,6 +1,2 @@
 minio:
-  enabled: true
-  endpoint: http://localhost:9000
-  credentials:
-    accessKey: cakecdn
-    secretKey: sbmKVeCWHwd4fxbMqwuY
+  enabled: false

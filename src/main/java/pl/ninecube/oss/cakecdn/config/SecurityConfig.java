@@ -21,36 +21,54 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@SecurityScheme(name = "basicAuth", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
+@SecurityScheme(
+        name = "basicAuth",
+        scheme = "basic",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER)
 public class SecurityConfig {
 
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  @Profile({"integration"})
+  public UserDetailsService userDetailsServiceForTest() {
+    UserDetails admin =
+            User.builder()
+                    .username("admin")
+                    .password("password")
+                    .passwordEncoder(s -> passwordEncoder().encode(s))
+                    .build();
 
-    @Bean
-    @Profile({"integration"})
-    public UserDetailsService userDetailsServiceForTest() {
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("password")
-                .passwordEncoder(s -> passwordEncoder().encode(s))
-                .build();
+    UserDetails test =
+            User.builder()
+                    .username("test")
+                    .password("password")
+                    .passwordEncoder(s -> passwordEncoder().encode(s))
+                    .build();
 
-        return new InMemoryUserDetailsManager(admin);
-    }
+    return new InMemoryUserDetailsManager(admin, test);
+  }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/account/**").authenticated()
-//                        .requestMatchers("/project/**").authenticated()
-                        .anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(withDefaults());
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(
+                    (authorizeHttpRequests) ->
+                            authorizeHttpRequests
+                                    .requestMatchers("/account/**")
+                                    .authenticated()
+                                    .requestMatchers("/project/**")
+                                    .authenticated()
+                                    .requestMatchers("/storage/**")
+                                    .authenticated()
+                                    .anyRequest()
+                                    .permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .httpBasic(withDefaults());
 
-        return http.build();
-    }
+    return http.build();
+  }
 }

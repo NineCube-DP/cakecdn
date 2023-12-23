@@ -7,31 +7,31 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
 public interface MinioIntegration {
-    int MINIO_API_PORT = 9000;
-    int MINIO_DASHBOARD_PORT = 9001;
-    String MINIO_DOCKER_IMAGE = "minio/minio:latest";
+  int MINIO_API_PORT = 9000;
+  String MINIO_DOCKER_IMAGE = "minio/minio:latest";
 
-    @Container
-    GenericContainer<?> minioContainer = new GenericContainer<>(DockerImageName.parse(MINIO_DOCKER_IMAGE))
-            .withExposedPorts(MINIO_API_PORT)
-            .withExposedPorts(MINIO_DASHBOARD_PORT)
-            .withCommand("server /data --console-address :9001")
-            .withReuse(true);
+  @Container
+  GenericContainer<?> minioContainer =
+          new GenericContainer<>(DockerImageName.parse(MINIO_DOCKER_IMAGE))
+                  .withExposedPorts(MINIO_API_PORT)
+                  .withEnv("MINIO_ROOT_USER", "minioadmin")
+                  .withEnv("MINIO_ROOT_PASSWORD", "minioadmin")
+                  .withCommand("server /data")
+                  .withReuse(true);
 
-    @DynamicPropertySource
-    static void dynamicConfigureMinioProperties(DynamicPropertyRegistry registry) {
-        minioContainer.start();
+  @DynamicPropertySource
+  static void dynamicConfigureMinioProperties(DynamicPropertyRegistry registry) {
+    minioContainer.start();
 
-        registry.add("storage.s3.connection.host", minioContainer::getHost);
-        registry.add("storage.s3.connection.port", () -> minioContainer.getMappedPort(MINIO_API_PORT)
-        );
-        registry.add("storage.s3.connection.tls-enabled", () -> false
-        );
-        registry.add("storage.s3.credential.login", () -> "minioadmin"
-        );
-        registry.add("storage.s3.credential.password", () -> "minioadmin"
-        );
-        registry.add("storage.s3.connection.bucket-name", () -> "bucket-testcontainers"
-        );
-    }
+    registry.add("minio.enabled", () -> true);
+    registry.add(
+            "minio.endpoint",
+            () ->
+                    "http://"
+                            + minioContainer.getHost()
+                            + ":"
+                            + minioContainer.getMappedPort(MINIO_API_PORT));
+    registry.add("minio.credentials.accessKey", () -> "minioadmin");
+    registry.add("minio.credentials.secretKey", () -> "minioadmin");
+  }
 }

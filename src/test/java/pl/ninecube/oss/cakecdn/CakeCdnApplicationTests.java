@@ -1,12 +1,19 @@
 package pl.ninecube.oss.cakecdn;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.ninecube.oss.cakecdn.repository.StorageRepository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class CakeCdnApplicationTests extends BaseIntegrationTest {
 
-    @Test
-    void contextLoads() {
-    }
+  private final StorageRepository storageRepository;
 
+  @Test
+  void contextLoads() {
+    assertThat(storageRepository).isNotNull();
+  }
 }
