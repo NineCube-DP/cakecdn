@@ -30,27 +30,27 @@ public class StorageRestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new storage")
-    public StorageResponse createNewBucket(
+    public StorageResponse createNewStorage(
             @RequestParam Long projectId, @Valid @RequestBody StorageCreateDto dto) {
-        return storageService.createBucket(projectId, dto);
+        return storageService.createStorage(projectId, dto);
     }
 
     @GetMapping("/{storageId}")
     @Operation(summary = "Get storage info by storageId")
-    public StorageResponse getBucketMetadata(@PathVariable Long storageId) {
-        return storageService.getBucketMetadata(storageId);
+    public StorageResponse getStorageMetadata(@PathVariable Long storageId) {
+        return storageService.getStorageMetadata(storageId);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Get storage info by storageId")
-    public List<StorageResponse> findBucketsByName(@RequestParam String name) {
-        return storageService.getBucketMetadata(storageId);
+    public List<StorageResponse> findStorageByName(@RequestParam String storageName) {
+        return storageService.findStorageMetadatasByName(storageName);
     }
 
     @DeleteMapping("/{storageId}")
     @Operation(summary = "Delete storage by id")
     public void deleteProject(@PathVariable Long storageId) {
-        storageService.deleteBucket(storageId);
+        storageService.deleteStorage(storageId);
     }
 
     // fixme - fix upload file with json
