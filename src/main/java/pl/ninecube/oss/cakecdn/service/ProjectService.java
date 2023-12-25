@@ -14,6 +14,10 @@ import pl.ninecube.oss.cakecdn.model.mapper.ProjectMapper;
 import pl.ninecube.oss.cakecdn.repository.AccountRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -64,5 +68,13 @@ public class ProjectService {
 
     public void deleteProjectById(Long projectId) {
         projectRepository.deleteById(projectId);
+    }
+
+    public List<ProjectResponse> getProjectByName(String projectName) {
+        var entity = projectRepository.findAllByNameContainingIgnoreCase(projectName);
+        return entity.stream()
+                .map(projectMapper::toResponse)
+                .sorted(Comparator.comparing(ProjectResponse::getId))
+                .collect(Collectors.toList());
     }
 }
