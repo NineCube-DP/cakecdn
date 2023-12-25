@@ -10,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.ninecube.oss.cakecdn.model.dto.ItemResponse;
-import pl.ninecube.oss.cakecdn.model.dto.ItemUpdateDto;
-import pl.ninecube.oss.cakecdn.model.dto.StorageCreateDto;
-import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
+import pl.ninecube.oss.cakecdn.model.dto.*;
 import pl.ninecube.oss.cakecdn.service.StorageService;
 
 import java.util.List;
@@ -42,7 +39,7 @@ public class StorageRestController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Get storage info by storageId")
+    @Operation(summary = "Find storages info by name")
     public List<StorageResponse> findStorageByName(@RequestParam String storageName) {
         return storageService.findStorageMetadatasByName(storageName);
     }
@@ -53,7 +50,6 @@ public class StorageRestController {
         storageService.deleteStorage(storageId);
     }
 
-    // fixme - fix upload file with json
     @PostMapping(value = "/item", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Save new file")
@@ -65,7 +61,6 @@ public class StorageRestController {
     @GetMapping("/item/{itemId}")
     @Operation(summary = "Get bytes of file by itemId")
     public byte[] returnFile(@PathVariable Long itemId) {
-        // todo return file name from metadata
         return storageService.getFile(itemId);
     }
 
@@ -73,7 +68,6 @@ public class StorageRestController {
     @Operation(summary = "Get bytes of file by itemId")
     public byte[] returnFileFullPath(
             @PathVariable String storageName, @PathVariable String itemUuid) {
-        // todo return file name from metadata
         return storageService.getFile(storageName, itemUuid);
     }
 
@@ -87,6 +81,13 @@ public class StorageRestController {
     @Operation(summary = "Get file metadata by itemId")
     public ItemResponse readItemMetadata(@PathVariable Long itemId) {
         return storageService.getFileMetadata(itemId);
+    }
+
+    @GetMapping("/item/metadata/search")
+    @Operation(summary = "Find items metadata by search query")
+    public List<ItemResponse> findItemsMetadata(
+            SearchMetadataQuery searchMetadataQuery) {
+        return storageService.findItemsMetadataByQuery(searchMetadataQuery);
     }
 
     @PutMapping("/item/{itemId}/metadata")

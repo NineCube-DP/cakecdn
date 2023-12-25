@@ -12,10 +12,7 @@ import pl.ninecube.oss.cakecdn.exception.TechnicalException;
 import pl.ninecube.oss.cakecdn.model.domain.Item;
 import pl.ninecube.oss.cakecdn.model.domain.Project;
 import pl.ninecube.oss.cakecdn.model.domain.Storage;
-import pl.ninecube.oss.cakecdn.model.dto.ItemResponse;
-import pl.ninecube.oss.cakecdn.model.dto.ItemUpdateDto;
-import pl.ninecube.oss.cakecdn.model.dto.StorageCreateDto;
-import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
+import pl.ninecube.oss.cakecdn.model.dto.*;
 import pl.ninecube.oss.cakecdn.model.entity.ItemEntity;
 import pl.ninecube.oss.cakecdn.model.entity.ProjectEntity;
 import pl.ninecube.oss.cakecdn.model.entity.StorageEntity;
@@ -227,5 +224,16 @@ public class StorageService {
         ItemEntity save = itemRepository.save(entity);
 
         return itemMapper.toResponse(save);
+    }
+
+    public List<ItemResponse> findItemsMetadataByQuery(SearchMetadataQuery searchMetadataQuery) {
+        List<ItemEntity> items = itemRepository.findByTagsInOrCategoriesInOrParametersIn(
+                searchMetadataQuery.getTags(),
+                searchMetadataQuery.getCategories(),
+                searchMetadataQuery.getParameters());
+        return items.stream()
+                .map(itemMapper::toResponse)
+                .sorted(Comparator.comparing(ItemResponse::getId))
+                .collect(Collectors.toList());
     }
 }
