@@ -38,7 +38,7 @@ public class ProjectRestController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Get project by id")
+    @Operation(summary = "Find projects by name")
     public List<ProjectResponse> searchProject(@RequestParam String projectName) {
         return projectService.getProjectByName(projectName);
     }
