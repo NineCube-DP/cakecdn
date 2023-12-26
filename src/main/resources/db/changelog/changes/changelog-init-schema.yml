@@ -57,7 +57,7 @@ databaseChangeLog:
                   value: "$2y$10$YqpS0fUuHdCTo29CMrzYxuA2RvZOq6.h0Sls2EFX7RtNXkJeZDAtS"
               - column:
                   name: version
-                  value: 1
+                  value: '1'
               - column:
                   name: creation_time_stamp
                   value: now()
@@ -313,3 +313,11 @@ databaseChangeLog:
                     nullable: false
                   name: value
                   type: VARCHAR
+  - changeSet:
+      id: 'add unique base_url in project'
+      author: 'dpustula'
+      changes:
+        - addUniqueConstraint:
+            tableName: projects
+            columnNames: base_url
+            constraintName: uq_projects_base_url

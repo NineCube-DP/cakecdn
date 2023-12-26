@@ -11,6 +11,8 @@ spring:
     url: jdbc:postgresql://db:5432/cakecdn_db
     username: cake
     password: UUcm3K4nT3MEFRmfRMj4
+  jpa:
+    open-in-view: false
 
 minio:
   enabled: true
