@@ -20,6 +20,7 @@ public abstract class AccountMapper {
 
   @Mapping(ignore = true, target = "id")
   @Mapping(source = "password", target = "password", qualifiedByName = "encodePassword")
+  @Mapping(ignore = true, target = "version")
   public abstract Account toDomain(AccountCreateDto dto);
 
   public abstract Account toDomain(AccountEntity entity);

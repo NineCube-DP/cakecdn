@@ -15,8 +15,9 @@ import pl.ninecube.oss.cakecdn.model.entity.ProjectEntity;
 public abstract class ProjectMapper {
 
   @Mapping(ignore = true, target = "id")
-  @Mapping(ignore = true, target = "enabled")
   @Mapping(ignore = true, target = "owner")
+  @Mapping(ignore = true, target = "enabled")
+  @Mapping(ignore = true, target = "version")
   public abstract Project toDomain(ProjectCreateDto dto);
 
   public abstract Project toDomain(ProjectEntity entity);
@@ -28,6 +29,7 @@ public abstract class ProjectMapper {
 
   @Mapping(ignore = true, target = "id")
   @Mapping(ignore = true, target = "owner")
+  @Mapping(ignore = true, target = "version")
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   public abstract Project update(@MappingTarget Project domain, ProjectUpdateDto dto);
 }

@@ -27,6 +27,7 @@ public abstract class ItemMapper {
   @Mapping(ignore = true, target = "uuid")
   @Mapping(ignore = true, target = "storage")
   @Mapping(ignore = true, target = "url")
+  @Mapping(ignore = true, target = "version")
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   public abstract Item update(@MappingTarget Item file, ItemUpdateDto dto);
 

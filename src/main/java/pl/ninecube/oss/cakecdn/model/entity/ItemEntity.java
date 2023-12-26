@@ -3,6 +3,7 @@ package pl.ninecube.oss.cakecdn.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @Table(name = "items")
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
@@ -24,13 +25,9 @@ public class ItemEntity extends BaseEntity {
   Long id;
 
   String fileName;
-
   String originalFileName;
-
   String contentType;
-
   Long fileSize;
-
   String uuid;
   String url;
 

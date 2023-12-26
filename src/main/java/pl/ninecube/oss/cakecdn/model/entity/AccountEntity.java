@@ -3,12 +3,13 @@ package pl.ninecube.oss.cakecdn.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @Table(name = "accounts")
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)

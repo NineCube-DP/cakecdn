@@ -1,8 +1,10 @@
 /* (C)2023 */
 package pl.ninecube.oss.cakecdn.model.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,4 +23,7 @@ public class Item {
   Set<String> tags;
   Set<String> categories;
   Map<String, String> parameters;
+
+  @Setter(AccessLevel.NONE)
+  Long version;
 }
