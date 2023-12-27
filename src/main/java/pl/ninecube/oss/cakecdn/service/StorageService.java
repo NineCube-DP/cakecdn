@@ -185,6 +185,7 @@ public class StorageService {
                 .readAllBytes();
     }
 
+    @Transactional
     public ItemResponse getFileMetadata(Long itemId) {
         ItemEntity file =
                 itemRepository
@@ -210,6 +211,7 @@ public class StorageService {
         itemRepository.deleteById(itemId);
     }
 
+    @Transactional
     public ItemResponse updateMetadata(Long itemId, ItemUpdateDto dto) {
         ItemEntity file =
                 itemRepository
