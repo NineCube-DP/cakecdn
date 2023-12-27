@@ -37,20 +37,20 @@ public class ItemEntity extends BaseEntity {
 
   @Builder.Default
   @Column(name = "tag", nullable = false)
-  @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+  @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "item_tags", joinColumns = @JoinColumn(name = "item_id"))
   Set<String> tags = new HashSet<>();
 
   @Builder.Default
   @Column(name = "category", nullable = false)
-  @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+  @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
   Set<String> categories = new HashSet<>();
 
   @Builder.Default
-  @ElementCollection
-  @MapKeyColumn(name = "name")
   @Column(name = "value")
+  @MapKeyColumn(name = "name")
+  @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "item_parameters", joinColumns = @JoinColumn(name = "item_id"))
   Map<String, String> parameters = new HashMap<>();
 }

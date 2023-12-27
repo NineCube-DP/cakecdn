@@ -13,5 +13,5 @@ import java.util.Set;
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     Optional<ItemEntity> findByStorageNameAndUuid(String storageName, String itemUuid);
 
-    List<ItemEntity> findByTagsInOrCategoriesInOrParametersIn(Set<String> tags, Set<String> categories, Set<String> parameters);
+    List<ItemEntity> findByTagsInAndCategoriesInAndParametersIn(Set<String> tags, Set<String> categories, Set<String> parameters);
 }

@@ -3,6 +3,7 @@ package pl.ninecube.oss.cakecdn.service;
 
 import io.minio.*;
 import io.minio.errors.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -226,11 +227,13 @@ public class StorageService {
         return itemMapper.toResponse(save);
     }
 
+    @Transactional
     public List<ItemResponse> findItemsMetadataByQuery(SearchMetadataQuery searchMetadataQuery) {
-        List<ItemEntity> items = itemRepository.findByTagsInOrCategoriesInOrParametersIn(
+        List<ItemEntity> items = itemRepository.findByTagsInAndCategoriesInAndParametersIn(
                 searchMetadataQuery.getTags(),
                 searchMetadataQuery.getCategories(),
                 searchMetadataQuery.getParameters());
+
         return items.stream()
                 .map(itemMapper::toResponse)
                 .sorted(Comparator.comparing(ItemResponse::getId))
