@@ -13,6 +13,8 @@ public class Account {
   String username;
   String password;
 
+  Boolean fullAccessPermission;
+
   @Setter(AccessLevel.NONE)
   Long version;
 }

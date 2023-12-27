@@ -10,22 +10,36 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.ninecube.oss.cakecdn.repository.AccountRepository;
 
-import java.util.Collections;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Profile("!integration")
 public class UserDetail implements UserDetailsService {
-  private final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    var account =
-            accountRepository
-                    .findByUsername(username)
-                    .orElseThrow(
-                            () -> new UsernameNotFoundException("User not exists by Username"));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var account =
+                accountRepository
+                        .findByUsername(username)
+                        .orElseThrow(
+                                () -> new UsernameNotFoundException("User not exists by Username"));
 
-    return new User(username, account.getPassword(), Collections.emptyList());
-  }
+        User.UserBuilder userBuilder = User.builder()
+                .username(account.getUsername())
+                .password(account.getPassword());
+
+
+        if (Objects.nonNull(account.getRole()))
+            userBuilder.roles(account.getRole());
+        else {
+            userBuilder.roles("USER");
+
+            if (account.getFullAccessPermission())
+                userBuilder.authorities("full_access");
+        }
+
+        return userBuilder.build();
+    }
 }

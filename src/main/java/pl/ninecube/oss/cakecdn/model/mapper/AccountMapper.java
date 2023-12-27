@@ -26,6 +26,7 @@ public abstract class AccountMapper {
   public abstract Account toDomain(AccountEntity entity);
 
   @Mapping(ignore = true, target = "projects")
+  @Mapping(ignore = true, target = "role")
   public abstract AccountEntity toEntity(Account account);
 
   public abstract AccountResponse toResponse(AccountEntity entity);

@@ -13,4 +13,5 @@ import lombok.extern.jackson.Jacksonized;
 public class AccountUpdateDto {
   String username;
   String password;
+  Boolean fullAccessPermission;
 }

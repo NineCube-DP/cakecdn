@@ -15,4 +15,6 @@ public class AccountCreateDto {
   @NotNull String username;
 
   @NotNull String password;
+
+  Boolean fullAccessPermission;
 }

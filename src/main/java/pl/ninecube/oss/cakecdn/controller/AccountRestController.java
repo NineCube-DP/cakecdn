@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.ninecube.oss.cakecdn.model.dto.AccountCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.AccountResponse;
@@ -18,6 +19,7 @@ import pl.ninecube.oss.cakecdn.service.AccountService;
 @RequiredArgsConstructor
 @Tag(name = "Managing accounts")
 @SecurityRequirement(name = "basicAuth")
+@PreAuthorize("hasRole('ADMIN') or hasAuthority('full_access')")
 public class AccountRestController {
 
   private final AccountService accountService;

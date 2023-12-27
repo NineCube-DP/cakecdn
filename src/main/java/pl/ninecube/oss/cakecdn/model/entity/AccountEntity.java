@@ -23,6 +23,10 @@ public class AccountEntity extends BaseEntity {
           allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
   protected Long id;
+  private String role;
+
+  private Boolean fullAccessPermission;
+
 
   private String username;
   private String password;

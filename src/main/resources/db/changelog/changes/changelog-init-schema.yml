@@ -321,3 +321,31 @@ databaseChangeLog:
             tableName: projects
             columnNames: base_url
             constraintName: uq_projects_base_url
+  - changeSet:
+      id: 'add role to account'
+      author: 'dpustula'
+      changes:
+        - addColumn:
+            tableName: accounts
+            columns:
+              - column:
+                  name: role
+                  type: varchar(50)
+        - update:
+            tableName: accounts
+            where: id='0'
+            columns:
+              - column:
+                  name: role
+                  value: 'ADMIN'
+  - changeSet:
+      id: 'add full_access_permission to account'
+      author: 'dpustula'
+      changes:
+        - addColumn:
+            tableName: accounts
+            columns:
+              - column:
+                  name: full_access_permission
+                  defaultValueBoolean: false
+                  type: BOOLEAN
