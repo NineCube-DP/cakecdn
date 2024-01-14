@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.repository;
 
 import org.springframework.data.repository.CrudRepository;
@@ -11,7 +11,10 @@ import java.util.Set;
 
 @Repository
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
-    Optional<ItemEntity> findByStorageNameAndUuid(String storageName, String itemUuid);
+    Optional<ItemEntity> findByStorageIdAndUuid(Long storageId, String itemUuid);
 
-    List<ItemEntity> findByTagsInAndCategoriesInAndParametersIn(Set<String> tags, Set<String> categories, Set<String> parameters);
+    List<ItemEntity> findByTagsInAndCategoriesInAndParametersIn(
+            Set<String> tags, Set<String> categories, Set<String> parameters);
+
+    List<ItemEntity> findByStorageId(Long storageId);
 }

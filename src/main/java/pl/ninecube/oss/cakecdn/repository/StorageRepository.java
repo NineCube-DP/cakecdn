@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.repository;
 
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface StorageRepository extends CrudRepository<StorageEntity, Long> {
-  Optional<StorageEntity> findByName(String bucketName);
+    Optional<StorageEntity> findByName(String bucketName);
 
-  List<StorageEntity> findAllByNameContainingIgnoreCase(String storageName);
+    List<StorageEntity> findAllByNameContainingIgnoreCase(String storageName);
+
+    List<StorageEntity> findByProjectId(Long projectId);
 }

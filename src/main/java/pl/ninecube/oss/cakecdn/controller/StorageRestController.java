@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,13 +64,6 @@ public class StorageRestController {
         return storageService.getFile(itemId);
     }
 
-    @GetMapping("/{storageName}/{itemUuid}")
-    @Operation(summary = "Get bytes of file by itemId")
-    public byte[] returnFileFullPath(
-            @PathVariable String storageName, @PathVariable String itemUuid) {
-        return storageService.getFile(storageName, itemUuid);
-    }
-
     @DeleteMapping("/item/{itemId}")
     @Operation(summary = "Delete file by itemId")
     public void deleteFile(@PathVariable Long itemId) {
@@ -85,8 +78,7 @@ public class StorageRestController {
 
     @GetMapping("/item/metadata/search")
     @Operation(summary = "Find items metadata by search query")
-    public List<ItemResponse> findItemsMetadata(
-            SearchMetadataQuery searchMetadataQuery) {
+    public List<ItemResponse> findItemsMetadata(SearchMetadataQuery searchMetadataQuery) {
         return storageService.findItemsMetadataByQuery(searchMetadataQuery);
     }
 

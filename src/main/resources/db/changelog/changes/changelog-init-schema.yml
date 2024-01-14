@@ -349,3 +349,54 @@ databaseChangeLog:
                   name: full_access_permission
                   defaultValueBoolean: false
                   type: BOOLEAN
+  - changeSet:
+      id: 'add application token table'
+      author: 'dpustula'
+      changes:
+        - createSequence:
+            incrementBy: 1
+            sequenceName: applications_tokens_seq
+            startValue: 1
+        - createTable:
+            tableName: applications_tokens
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: applications_tokens_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: projects_pkey
+                    references: projects(id)
+                  name: project_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: application_name
+                  type: VARCHAR
+              - column:
+                  constraints:
+                    nullable: false
+                  name: token
+                  type: VARCHAR
+              - column:
+                  name: version
+                  constraints:
+                    nullable: true
+                  type: INT
+              - column:
+                  name: creation_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'
+              - column:
+                  name: modification_time_stamp
+                  constraints:
+                    nullable: true
+                  type: 'TIMESTAMP WITHOUT TIME ZONE'

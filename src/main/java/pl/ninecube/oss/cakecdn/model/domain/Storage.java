@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.domain;
 
 import lombok.AccessLevel;
@@ -6,15 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
+import java.util.List;
+
 @Data
 @Builder
 public class Storage {
-  Long id;
+    Long id;
 
-  String name;
+    String name;
 
-  Project project;
+    Project project;
 
-  @Setter(AccessLevel.NONE)
-  Long version;
+    List<Item> items;
+
+    @Setter(AccessLevel.NONE)
+    Long version;
 }

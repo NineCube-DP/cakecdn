@@ -1,8 +1,7 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.service;
 
 import io.minio.*;
-import io.minio.errors.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,9 +23,6 @@ import pl.ninecube.oss.cakecdn.repository.ItemRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 import pl.ninecube.oss.cakecdn.repository.StorageRepository;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -72,26 +68,35 @@ public class StorageService {
         return storageMapper.toResponse(storageEntity);
     }
 
-    private boolean isBucketExist(String name)
-            throws ErrorResponseException,
-            InsufficientDataException,
-            InternalException,
-            InvalidKeyException,
-            InvalidResponseException,
-            IOException,
-            NoSuchAlgorithmException,
-            ServerException,
-            XmlParserException {
+    @SneakyThrows
+    private boolean isBucketExist(String name) {
         return client.bucketExists(BucketExistsArgs.builder().bucket(name).build());
     }
 
+    @Transactional
     public StorageResponse getStorageMetadata(Long bucketId) {
         StorageEntity storageEntity =
                 storageRepository
                         .findById(bucketId)
                         .orElseThrow(() -> new BusinessException("Bucket not exist"));
+        List<ItemEntity> items = itemRepository.findByStorageId(bucketId);
+        Storage storage = storageMapper.toDomain(storageEntity);
+        storage.setItems(items.stream().map(itemMapper::toDomain).collect(Collectors.toList()));
 
-        return storageMapper.toResponse(storageEntity);
+        return storageMapper.toResponse(storage);
+    }
+
+    @Transactional
+    public StorageResponse getStorageMetadataByName(String storageName) {
+        StorageEntity storageEntity =
+                storageRepository
+                        .findByName(storageName)
+                        .orElseThrow(() -> new BusinessException("Bucket not exist"));
+        List<ItemEntity> items = itemRepository.findByStorageId(storageEntity.getId());
+        Storage storage = storageMapper.toDomain(storageEntity);
+        storage.setItems(items.stream().map(itemMapper::toDomain).collect(Collectors.toList()));
+
+        return storageMapper.toResponse(storage);
     }
 
     public List<StorageResponse> findStorageMetadatasByName(String storageName) {
@@ -130,7 +135,7 @@ public class StorageService {
                         .originalFileName(file.getOriginalFilename())
                         .contentType(file.getContentType())
                         .fileSize(file.getSize())
-                        .storage(storage)
+                        .storageId(storage.getId())
                         .uuid(uuid)
                         .url(
                                 storage.getProject().getBaseUrl()
@@ -144,7 +149,7 @@ public class StorageService {
             client.putObject(
                     PutObjectArgs.builder()
                             .object(item.getUuid())
-                            .bucket(item.getStorage().getName())
+                            .bucket(storage.getName())
                             .contentType(file.getContentType())
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .build());
@@ -162,9 +167,14 @@ public class StorageService {
                         .findById(itemId)
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
+        StorageEntity storage =
+                storageRepository
+                        .findById(file.getStorageId())
+                        .orElseThrow(() -> new BusinessException("Storage not exist"));
+
         return client.getObject(
                         GetObjectArgs.builder()
-                                .bucket(file.getStorage().getName())
+                                .bucket(storage.getName())
                                 .object(file.getUuid())
                                 .build())
                 .readAllBytes();
@@ -172,14 +182,20 @@ public class StorageService {
 
     @SneakyThrows
     public byte[] getFile(String storageName, String itemUuid) {
+
+        StorageEntity storage =
+                storageRepository
+                        .findByName(storageName)
+                        .orElseThrow(() -> new BusinessException("Storage not exist"));
+
         ItemEntity file =
                 itemRepository
-                        .findByStorageNameAndUuid(storageName, itemUuid)
+                        .findByStorageIdAndUuid(storage.getId(), itemUuid)
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
         return client.getObject(
                         GetObjectArgs.builder()
-                                .bucket(file.getStorage().getName())
+                                .bucket(storage.getName())
                                 .object(file.getUuid())
                                 .build())
                 .readAllBytes();
@@ -202,9 +218,14 @@ public class StorageService {
                         .findById(itemId)
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
+        StorageEntity storage =
+                storageRepository
+                        .findById(file.getStorageId())
+                        .orElseThrow(() -> new BusinessException("Storage not exist"));
+
         client.removeObject(
                 RemoveObjectArgs.builder()
-                        .bucket(file.getStorage().getName())
+                        .bucket(storage.getName())
                         .object(file.getUuid())
                         .build());
 
@@ -231,10 +252,11 @@ public class StorageService {
 
     @Transactional
     public List<ItemResponse> findItemsMetadataByQuery(SearchMetadataQuery searchMetadataQuery) {
-        List<ItemEntity> items = itemRepository.findByTagsInAndCategoriesInAndParametersIn(
-                searchMetadataQuery.getTags(),
-                searchMetadataQuery.getCategories(),
-                searchMetadataQuery.getParameters());
+        List<ItemEntity> items =
+                itemRepository.findByTagsInAndCategoriesInAndParametersIn(
+                        searchMetadataQuery.getTags(),
+                        searchMetadataQuery.getCategories(),
+                        searchMetadataQuery.getParameters());
 
         return items.stream()
                 .map(itemMapper::toResponse)

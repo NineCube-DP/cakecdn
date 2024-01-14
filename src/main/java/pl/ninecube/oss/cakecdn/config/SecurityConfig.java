@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
@@ -28,10 +28,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
         scheme = "basic",
         type = SecuritySchemeType.HTTP,
         in = SecuritySchemeIn.HEADER)
-@EnableMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = true,
-        jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -72,8 +69,12 @@ public class SecurityConfig {
                                         .authenticated()
                                         .requestMatchers("/storage/**")
                                         .authenticated()
+                                        .requestMatchers("/token/**")
+                                        .authenticated()
+                                        .requestMatchers("/cdn/**")
+                                        .permitAll()
                                         .anyRequest()
-                                        .permitAll())
+                                        .authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults());
 
