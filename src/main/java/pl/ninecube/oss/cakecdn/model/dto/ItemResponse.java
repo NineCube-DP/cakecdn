@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,17 +14,18 @@ import java.util.Set;
 @Jacksonized
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemResponse {
-  Long id;
+    Long id;
 
-  String fileName;
-  String originalFileName;
-  String contentType;
-  long fileSize;
+    String fileName;
+    String originalFileName;
+    String contentType;
+    long fileSize;
+    String storageId;
 
-  String uuid;
-  String url;
+    String uuid;
+    String url;
 
-  Set<String> tags;
-  Set<String> categories;
-  Map<String, String> parameters;
+    Set<String> tags;
+    Set<String> categories;
+    Map<String, String> parameters;
 }

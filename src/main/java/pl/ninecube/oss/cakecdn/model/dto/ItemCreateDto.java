@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,14 +9,14 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.Map;
 import java.util.Set;
 
-@Jacksonized
-@Builder
 @Value
+@Builder
+@Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemCreateDto {
-  String fileName;
+    String fileName;
 
-  Set<String> tags;
-  Set<String> categories;
-  Map<String, String> parameters;
+    Set<String> tags;
+    Set<String> categories;
+    Map<String, String> parameters;
 }

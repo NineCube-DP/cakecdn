@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,13 +7,12 @@ import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 import org.hibernate.validator.constraints.URL;
 
-@Jacksonized
-@Builder
 @Value
+@Builder
+@Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectCreateDto {
     String name;
-  
-    @URL
-    String baseUrl;
+
+    @URL String baseUrl;
 }
