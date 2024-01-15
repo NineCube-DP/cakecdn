@@ -19,4 +19,6 @@ public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     List<ItemEntity> findByStorageId(Long storageId);
 
     Optional<ItemEntity> findByIdAndOwnerId(Long itemId, Long ownerId);
+
+    boolean existsByUuid(String uuid);
 }

@@ -5,6 +5,7 @@ import io.minio.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,9 +131,18 @@ public class StorageService {
         storageRepository.delete(storageEntity);
     }
 
+    @NotNull
+    private String getNonExistingUuid() {
+        UUID uuid;
+        do {
+            uuid = UUID.randomUUID();
+        } while (itemRepository.existsByUuid(uuid.toString()));
+        return uuid.toString();
+    }
+
     @SneakyThrows
     public ItemResponse saveFile(Long bucketId, MultipartFile file) {
-        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var storageEntity =
                 storageRepository
@@ -140,9 +150,10 @@ public class StorageService {
                         .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
         var storage = storageMapper.toDomain(storageEntity);
-        var uuid = UUID.randomUUID().toString();
-//        todo verify uuid unique
-        ProjectEntity projectEntity = projectRepository.findById(storage.getProjectId())
+
+        var uuid = getNonExistingUuid();
+
+        var projectEntity = projectRepository.findById(storage.getProjectId())
                 .orElseThrow(() -> new BusinessException("Project not exist"));
 
         var item =
