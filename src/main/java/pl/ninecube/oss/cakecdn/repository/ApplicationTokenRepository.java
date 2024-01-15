@@ -14,5 +14,7 @@ public interface ApplicationTokenRepository extends JpaRepository<ApplicationTok
 
     boolean existsByToken(String token);
 
-    Set<ApplicationTokenEntity> findAllByProjectId(Long projectId);
+    Set<ApplicationTokenEntity> findAllByProjectIdAndOwnerId(Long projectId, Long ownerId);
+
+    Optional<ApplicationTokenEntity> findByIdAndOwnerId(Long tokenId, Long ownerId);
 }

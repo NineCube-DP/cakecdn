@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.entity;
 
 import jakarta.persistence.*;
@@ -14,17 +14,15 @@ import lombok.experimental.SuperBuilder;
 @Setter(value = AccessLevel.PACKAGE)
 public class StorageEntity extends BaseEntity {
 
-  @Id
-  @SequenceGenerator(
-          name = "storages_seq_generator",
-          sequenceName = "storages_seq",
-          allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "storages_seq_generator")
-  protected Long id;
+    @Id
+    @SequenceGenerator(
+            name = "storages_seq_generator",
+            sequenceName = "storages_seq",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "storages_seq_generator")
+    Long id;
+    Long projectId;
 
-  String name;
+    String name;
 
-  @ManyToOne
-  @JoinColumn(name = "project_id")
-  ProjectEntity project;
 }

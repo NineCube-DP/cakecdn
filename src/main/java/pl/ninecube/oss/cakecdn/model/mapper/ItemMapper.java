@@ -12,9 +12,12 @@ import pl.ninecube.oss.cakecdn.model.entity.ItemEntity;
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         uses = StorageMapper.class)
 public abstract class ItemMapper {
+
+    @Mapping(source = "ownerId", target = "owner.id")
     public abstract Item toDomain(ItemEntity entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "owner.id", target = "ownerId")
     public abstract ItemEntity toEntity(Item item);
 
     @Mapping(source = ".", target = "fileName", qualifiedByName = "itemNameMapper")
@@ -28,6 +31,7 @@ public abstract class ItemMapper {
     @Mapping(ignore = true, target = "storageId")
     @Mapping(ignore = true, target = "url")
     @Mapping(ignore = true, target = "version")
+    @Mapping(ignore = true, target = "owner")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract Item update(@MappingTarget Item file, ItemUpdateDto dto);
 

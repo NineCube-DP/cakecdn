@@ -2,9 +2,12 @@
 package pl.ninecube.oss.cakecdn.service;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.ninecube.oss.cakecdn.exception.BusinessException;
 import pl.ninecube.oss.cakecdn.model.domain.ApplicationToken;
+import pl.ninecube.oss.cakecdn.model.domain.Owner;
 import pl.ninecube.oss.cakecdn.model.dto.CreateTokenDto;
 import pl.ninecube.oss.cakecdn.model.dto.TokenResponse;
 import pl.ninecube.oss.cakecdn.model.entity.ApplicationTokenEntity;
@@ -27,6 +30,7 @@ public class ApplicationTokenService {
     private final ApplicationTokenMapper applicationTokenMapper;
     private final ApplicationTokenRepository applicationTokenRepository;
 
+
     public boolean isValid(String applicationToken, String storageName) {
         return applicationTokenRepository
                 .findByToken(applicationToken)
@@ -42,34 +46,49 @@ public class ApplicationTokenService {
 
     public TokenResponse createToken(CreateTokenDto createTokenDto) {
 
-        UUID uuid;
-        do {
-            uuid = UUID.randomUUID();
-        } while (applicationTokenRepository.existsByToken(uuid.toString()));
+        String uuid = getNonExistingUuid();
 
         if (!projectRepository.existsById(createTokenDto.getProjectId()))
             throw new BusinessException("Project not exist");
 
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         ApplicationToken applicationToken =
                 ApplicationToken.builder()
-                        .token(uuid.toString())
+                        .owner(owner)
+                        .token(uuid)
                         .applicationName(createTokenDto.getApplicationName())
                         .projectId(createTokenDto.getProjectId())
                         .build();
 
-        ApplicationTokenEntity applicationTokenEntity =
-                applicationTokenRepository.save(applicationTokenMapper.toEntity(applicationToken));
+        ApplicationTokenEntity applicationTokenEntity1 = applicationTokenMapper.toEntity(applicationToken);
+
+        ApplicationTokenEntity applicationTokenEntity = applicationTokenRepository.save(applicationTokenEntity1);
 
         return applicationTokenMapper.toResponse(applicationTokenEntity);
     }
 
+    @NotNull
+    private String getNonExistingUuid() {
+        UUID uuid;
+        do {
+            uuid = UUID.randomUUID();
+        } while (applicationTokenRepository.existsByToken(uuid.toString()));
+        return uuid.toString();
+    }
+
     public Set<TokenResponse> getTokens(Long projectId) {
-        return applicationTokenRepository.findAllByProjectId(projectId).stream()
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return applicationTokenRepository.findAllByProjectIdAndOwnerId(projectId, owner.getId()).stream()
                 .map(applicationTokenMapper::toResponse)
                 .collect(Collectors.toSet());
     }
 
     public void deleteToken(Long tokenId) {
-        applicationTokenRepository.deleteById(tokenId);
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ApplicationTokenEntity token = applicationTokenRepository.findByIdAndOwnerId(tokenId, owner.getId())
+                .orElseThrow(() -> new BusinessException("Token not exist"));
+
+        applicationTokenRepository.delete(token);
     }
 }

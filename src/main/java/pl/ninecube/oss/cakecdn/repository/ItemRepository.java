@@ -11,10 +11,12 @@ import java.util.Set;
 
 @Repository
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
-    Optional<ItemEntity> findByStorageIdAndUuid(Long storageId, String itemUuid);
+    Optional<ItemEntity> findByStorageIdAndUuidAndOwnerId(Long storageId, String itemUuid, Long id);
 
-    List<ItemEntity> findByTagsInAndCategoriesInAndParametersIn(
-            Set<String> tags, Set<String> categories, Set<String> parameters);
+    List<ItemEntity> findByTagsInAndCategoriesInAndParametersInAndOwnerId(
+            Set<String> tags, Set<String> categories, Set<String> parameters, Long id);
 
     List<ItemEntity> findByStorageId(Long storageId);
+
+    Optional<ItemEntity> findByIdAndOwnerId(Long itemId, Long ownerId);
 }

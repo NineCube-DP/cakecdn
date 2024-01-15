@@ -3,7 +3,7 @@ package pl.ninecube.oss.cakecdn.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.ninecube.oss.cakecdn.exception.BusinessException;
+import pl.ninecube.oss.cakecdn.exception.ResourceNotExistException;
 import pl.ninecube.oss.cakecdn.model.dto.AccountCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.AccountResponse;
 import pl.ninecube.oss.cakecdn.model.dto.AccountUpdateDto;
@@ -28,7 +28,7 @@ public class AccountService {
     var entity =
             accountRepository
                     .findById(accountId)
-                    .orElseThrow(() -> new BusinessException("Account not found"));
+                    .orElseThrow(() -> new ResourceNotExistException("Account not found"));
     return accountMapper.toResponse(entity);
   }
 
@@ -36,7 +36,7 @@ public class AccountService {
     var entity =
             accountRepository
                     .findById(accountId)
-                    .orElseThrow(() -> new BusinessException("Account not found"));
+                    .orElseThrow(() -> new ResourceNotExistException("Account not found"));
 
     var updated = accountMapper.update(accountMapper.toDomain(entity), dto);
 

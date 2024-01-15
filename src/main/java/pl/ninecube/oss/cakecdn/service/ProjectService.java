@@ -2,16 +2,15 @@
 package pl.ninecube.oss.cakecdn.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import pl.ninecube.oss.cakecdn.exception.BusinessException;
+import pl.ninecube.oss.cakecdn.exception.ResourceNotExistException;
+import pl.ninecube.oss.cakecdn.model.domain.Owner;
+import pl.ninecube.oss.cakecdn.model.domain.Project;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectResponse;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectUpdateDto;
-import pl.ninecube.oss.cakecdn.model.mapper.AccountMapper;
 import pl.ninecube.oss.cakecdn.model.mapper.ProjectMapper;
-import pl.ninecube.oss.cakecdn.repository.AccountRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 
 import java.util.Comparator;
@@ -22,21 +21,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectService {
 
-    private final AccountRepository accountRepository;
-    private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
-    private final AccountMapper accountMapper;
+    private final ProjectRepository projectRepository;
 
     public ProjectResponse createProject(ProjectCreateDto dto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        var accountEntity =
-                accountRepository
-                        .findByUsername(auth.getName())
-                        .orElseThrow(() -> new BusinessException("User not exists by Username"));
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         var project = projectMapper.toDomain(dto);
-        project.setOwner(accountMapper.toDomain(accountEntity));
+
+        project.setOwner(owner);
+
         // initially project is disabled
         project.setEnabled(false);
 
@@ -46,20 +40,28 @@ public class ProjectService {
     }
 
     public ProjectResponse getProjectById(Long projectId) {
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         var entity =
                 projectRepository
-                        .findById(projectId)
-                        .orElseThrow(() -> new BusinessException("Account not found"));
+                        .findByIdAndOwnerId(projectId, owner.getId())
+                        .orElseThrow(() -> new ResourceNotExistException("Project not found"));
+
         return projectMapper.toResponse(entity);
     }
 
     public ProjectResponse updateProjectById(Long projectId, ProjectUpdateDto dto) {
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         var entity =
                 projectRepository
-                        .findById(projectId)
-                        .orElseThrow(() -> new BusinessException("Account not found"));
+                        .findByIdAndOwnerId(projectId, owner.getId())
+                        .orElseThrow(() -> new ResourceNotExistException("Project not found"));
 
-        var updated = projectMapper.update(projectMapper.toDomain(entity), dto);
+        Project domain = projectMapper.toDomain(entity);
+        domain.setOwner(owner);
+
+        var updated = projectMapper.update(domain, dto);
 
         var updatedEntity = projectRepository.save(projectMapper.toEntity(updated));
 
@@ -67,11 +69,15 @@ public class ProjectService {
     }
 
     public void deleteProjectById(Long projectId) {
-        projectRepository.deleteById(projectId);
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        projectRepository.deleteByIdAndOwnerId(projectId, owner.getId());
     }
 
     public List<ProjectResponse> getProjectByName(String projectName) {
-        var entity = projectRepository.findAllByNameContainingIgnoreCase(projectName);
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        var entity = projectRepository.findAllByNameContainingIgnoreCaseAndOwnerId(projectName, owner.getId());
         return entity.stream()
                 .map(projectMapper::toResponse)
                 .sorted(Comparator.comparing(ProjectResponse::getId))

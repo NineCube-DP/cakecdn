@@ -16,6 +16,7 @@ public abstract class ApplicationTokenMapper {
 
     @Mapping(ignore = true, target = "id")
     @Mapping(ignore = true, target = "version")
+    @Mapping(source = "owner.id", target = "ownerId")
     public abstract ApplicationTokenEntity toEntity(ApplicationToken applicationToken);
 
     public abstract TokenResponse toResponse(ApplicationTokenEntity applicationTokenEntity);

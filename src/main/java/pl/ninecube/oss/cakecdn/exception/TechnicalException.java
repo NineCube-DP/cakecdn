@@ -1,9 +1,8 @@
 /* (C)2023 */
 package pl.ninecube.oss.cakecdn.exception;
 
-public class TechnicalException extends RuntimeException {
+import lombok.experimental.StandardException;
 
-  public TechnicalException(String description) {
-    super(description);
-  }
+@StandardException
+public class TechnicalException extends RuntimeException {
 }

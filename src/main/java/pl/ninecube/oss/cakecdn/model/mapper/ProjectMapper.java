@@ -20,8 +20,10 @@ public abstract class ProjectMapper {
   @Mapping(ignore = true, target = "version")
   public abstract Project toDomain(ProjectCreateDto dto);
 
+    @Mapping(ignore = true, target = "owner")
   public abstract Project toDomain(ProjectEntity entity);
 
+    @Mapping(source = "owner.id", target = "ownerId")
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   public abstract ProjectEntity toEntity(Project account);
 

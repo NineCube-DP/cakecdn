@@ -1,4 +1,4 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.entity;
 
 import jakarta.persistence.EntityListeners;
@@ -24,6 +24,8 @@ public abstract class BaseEntity implements Serializable {
     @Version
     protected Long version = 1L;
 
+    protected Long ownerId;
+
     @CreatedDate
     private OffsetDateTime creationTimeStamp;
 
@@ -32,13 +34,22 @@ public abstract class BaseEntity implements Serializable {
 
     protected BaseEntity(BaseEntityBuilder<?, ?> b) {
         this.version = b.version;
+        this.ownerId = b.ownerId;
     }
 
-    public static abstract class BaseEntityBuilder<C extends BaseEntity, B extends BaseEntityBuilder<C, B>> {
+    public abstract static class BaseEntityBuilder<
+            C extends BaseEntity, B extends BaseEntityBuilder<C, B>> {
         private Long version;
+
+        protected Long ownerId;
 
         public B version(Long version) {
             this.version = version;
+            return self();
+        }
+
+        public B ownerId(Long ownerId) {
+            this.ownerId = ownerId;
             return self();
         }
 

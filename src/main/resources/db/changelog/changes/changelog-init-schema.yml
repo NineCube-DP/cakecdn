@@ -400,3 +400,50 @@ databaseChangeLog:
                   constraints:
                     nullable: true
                   type: 'TIMESTAMP WITHOUT TIME ZONE'
+  - changeSet:
+      id: 'add owner_id to applications_tokens, items, projects and storages'
+      author: 'dpustula'
+      changes:
+        - addColumn:
+            tableName: applications_tokens
+            columns:
+              - column:
+                  name: owner_id
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  type: BIGINT
+        - addColumn:
+            tableName: items
+            columns:
+              - column:
+                  name: owner_id
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  type: BIGINT
+        - addColumn:
+            tableName: projects
+            columns:
+              - column:
+                  name: owner_id
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  type: BIGINT
+        - addColumn:
+            tableName: storages
+            columns:
+              - column:
+                  name: owner_id
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  type: BIGINT
+  - changeSet:
+      id: 'delete unused columns'
+      author: 'dpustula'
+      changes:
+        - dropColumn:
+            tableName: projects
+            columnName: account_id

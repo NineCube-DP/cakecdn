@@ -65,13 +65,13 @@ class StorageRestControllerIT extends BaseIntegrationTest implements MinioIntegr
     var projectCreateDto =
             ProjectCreateDto.builder()
                     .name(faker.pokemon().name())
-                    .baseUrl(faker.internet().url())
+                    .baseUrl("https://" + faker.internet().domainName())
                     .build();
 
     var result =
             mvc.perform(
                             post("/project")
-                                    .with(httpBasic("admin", "password"))
+                                    .with(httpBasic("test", "password"))
                                     .content(objectMapper.writeValueAsString(projectCreateDto))
                                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
@@ -88,7 +88,7 @@ class StorageRestControllerIT extends BaseIntegrationTest implements MinioIntegr
 
     var storageCreateDto =
             StorageCreateDto.builder()
-                    .name(faker.lorem().characters(3, 63).toLowerCase(Locale.ROOT))
+                    .name(faker.lorem().characters(3, 20).toLowerCase(Locale.ROOT))
                     .build();
 
     var result =

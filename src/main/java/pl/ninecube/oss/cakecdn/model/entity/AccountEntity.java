@@ -1,11 +1,9 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -14,23 +12,24 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(value = AccessLevel.PACKAGE)
-public class AccountEntity extends BaseEntity {
+public class AccountEntity {
 
-  @Id
-  @SequenceGenerator(
-          name = "accounts_seq_generator",
-          sequenceName = "projects_seq",
-          allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
-  protected Long id;
-  private String role;
+    @Id
+    @SequenceGenerator(
+            name = "accounts_seq_generator",
+            sequenceName = "projects_seq",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounts_seq_generator")
+    protected Long id;
 
-  private Boolean fullAccessPermission;
+    private String role;
 
+    private Boolean fullAccessPermission;
 
-  private String username;
-  private String password;
+    private String username;
+    private String password;
 
-  @OneToMany(mappedBy = "owner")
-  private List<ProjectEntity> projects;
+    @Version
+    @Builder.Default
+    private Long version = 1L;
 }

@@ -1,7 +1,12 @@
 package pl.ninecube.oss.cakecdn.model.domain;
 
-import io.minio.messages.Owner;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
+@Setter
+@Getter
+@SuperBuilder
 public abstract class Ownable {
     protected Owner owner;
 }

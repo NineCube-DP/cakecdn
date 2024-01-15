@@ -2,16 +2,18 @@
 package pl.ninecube.oss.cakecdn.model.domain;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Map;
 import java.util.Set;
 
 @Data
-@Builder
-public class Item {
+@SuperBuilder
+@EqualsAndHashCode(callSuper = false)
+public class Item extends Ownable {
     Long id;
     String fileName;
     String originalFileName;

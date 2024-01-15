@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler({BusinessException.class})
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception, HttpServletRequest request) {
+    ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
@@ -25,8 +25,21 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler({ResourceNotExistException.class})
+    ResponseEntity<ErrorResponse> handleBusinessException(ResourceNotExistException exception, HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder()
+                        .message(exception.getMessage())
+                        .error(exception.getClass().getSimpleName())
+                        .path(request.getServletPath())
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .build());
+    }
+
+    @ResponseBody
     @ExceptionHandler({TechnicalException.class})
-    public ResponseEntity<ErrorResponse> handleTechnicalException(TechnicalException exception, HttpServletRequest request) {
+    ResponseEntity<ErrorResponse> handleTechnicalException(TechnicalException exception, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR).
                 body(ErrorResponse.builder()
