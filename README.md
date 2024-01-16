@@ -7,13 +7,13 @@ Service for storing files and serving for websites
 First build app
 
 ```bash
-docker compose build
+docker compose --profile demo build
 ```
 
 then run
 
 ```bash
-docker compose up -d
+docker compose --profile demo up -d
 ```
 
 ## Use
