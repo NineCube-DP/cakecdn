@@ -13,7 +13,7 @@ import java.util.Set;
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchMetadataQuery {
-
+    String fileName;
     Set<String> tags;
     Set<String> categories;
     Set<String> parameters;

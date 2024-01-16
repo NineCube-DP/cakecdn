@@ -87,11 +87,9 @@ public class StorageService {
     }
 
     @Transactional
-    public StorageResponse getStorageMetadataByName(String storageName) {
-        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public StorageResponse getStorageMetadataByName(String storageName, Long ownerId) {
         StorageEntity storageEntity = storageRepository
-                .findByNameAndOwnerId(storageName, owner.getId())
+                .findByNameAndOwnerId(storageName, ownerId)
                 .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
         List<ItemEntity> items = itemRepository.findByStorageId(storageEntity.getId());
@@ -158,6 +156,7 @@ public class StorageService {
 
         var item =
                 Item.builder()
+                        .owner(owner)
                         .originalFileName(file.getOriginalFilename())
                         .contentType(file.getContentType())
                         .fileSize(file.getSize())
@@ -211,18 +210,17 @@ public class StorageService {
 
     @SneakyThrows
     public byte[] getFile(String storageName, String itemUuid) {
-        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        // todo consider secure download file with app token
         StorageEntity storageEntity =
                 storageRepository
-                        .findByNameAndOwnerId(storageName, owner.getId())
+                        .findByName(storageName)
                         .orElseThrow(() -> new BusinessException("Storage not exist"));
 
         Storage storage = storageMapper.toDomain(storageEntity);
 
         ItemEntity file =
                 itemRepository
-                        .findByStorageIdAndUuidAndOwnerId(storage.getId(), itemUuid, owner.getId())
+                        .findByStorageIdAndUuid(storage.getId(), itemUuid)
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
 
@@ -296,11 +294,12 @@ public class StorageService {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<ItemEntity> items =
-                itemRepository.findByTagsInAndCategoriesInAndParametersInAndOwnerId(
+                itemRepository.findByTagsInAndCategoriesInAndParametersInAndOwnerIdAndFileNameContains(
                         searchMetadataQuery.getTags(),
                         searchMetadataQuery.getCategories(),
                         searchMetadataQuery.getParameters(),
-                        owner.getId());
+                        owner.getId(),
+                        searchMetadataQuery.getFileName());
 
         return items.stream()
                 .map(itemMapper::toResponse)

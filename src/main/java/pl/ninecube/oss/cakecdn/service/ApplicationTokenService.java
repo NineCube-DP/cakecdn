@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import pl.ninecube.oss.cakecdn.exception.BusinessException;
+import pl.ninecube.oss.cakecdn.exception.ResourceNotExistException;
 import pl.ninecube.oss.cakecdn.model.domain.ApplicationToken;
 import pl.ninecube.oss.cakecdn.model.domain.Owner;
 import pl.ninecube.oss.cakecdn.model.dto.CreateTokenDto;
@@ -49,7 +49,7 @@ public class ApplicationTokenService {
         String uuid = getNonExistingUuid();
 
         if (!projectRepository.existsById(createTokenDto.getProjectId()))
-            throw new BusinessException("Project not exist");
+            throw new ResourceNotExistException("Project not exist");
 
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -87,8 +87,15 @@ public class ApplicationTokenService {
     public void deleteToken(Long tokenId) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ApplicationTokenEntity token = applicationTokenRepository.findByIdAndOwnerId(tokenId, owner.getId())
-                .orElseThrow(() -> new BusinessException("Token not exist"));
+                .orElseThrow(() -> new ResourceNotExistException("Token not exist"));
 
         applicationTokenRepository.delete(token);
+    }
+
+    public Long getOwner(String applicationToken) {
+        ApplicationTokenEntity token = applicationTokenRepository.findByToken(applicationToken)
+                .orElseThrow(() -> new ResourceNotExistException("Token not exist"));
+
+        return token.getOwnerId();
     }
 }

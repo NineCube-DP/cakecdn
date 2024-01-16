@@ -13,12 +13,14 @@ import java.util.Set;
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
     Optional<ItemEntity> findByStorageIdAndUuidAndOwnerId(Long storageId, String itemUuid, Long id);
 
-    List<ItemEntity> findByTagsInAndCategoriesInAndParametersInAndOwnerId(
-            Set<String> tags, Set<String> categories, Set<String> parameters, Long id);
+    List<ItemEntity> findByTagsInAndCategoriesInAndParametersInAndOwnerIdAndFileNameContains(
+            Set<String> tags, Set<String> categories, Set<String> parameters, Long id, String fileName);
 
     List<ItemEntity> findByStorageId(Long storageId);
 
     Optional<ItemEntity> findByIdAndOwnerId(Long itemId, Long ownerId);
 
     boolean existsByUuid(String uuid);
+
+    Optional<ItemEntity> findByStorageIdAndUuid(Long id, String itemUuid);
 }

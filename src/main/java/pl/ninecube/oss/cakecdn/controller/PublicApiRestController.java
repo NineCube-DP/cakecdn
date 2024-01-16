@@ -26,7 +26,8 @@ public class PublicApiRestController {
             @PathVariable String storageName, @RequestParam String applicationToken) {
         if (!applicationTokenService.isValid(applicationToken, storageName))
             throw new BusinessException("No application token is provided or token is wrong");
-        return storageService.getStorageMetadataByName(storageName);
+        Long ownerId = applicationTokenService.getOwner(applicationToken);
+        return storageService.getStorageMetadataByName(storageName, ownerId);
     }
 
     @GetMapping("/{storageName}/{itemUuid}")
