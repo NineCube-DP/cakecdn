@@ -23,6 +23,7 @@ import pl.ninecube.oss.cakecdn.model.mapper.StorageMapper;
 import pl.ninecube.oss.cakecdn.repository.ItemRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 import pl.ninecube.oss.cakecdn.repository.StorageRepository;
+import pl.ninecube.oss.cakecdn.repository.query.ItemQuery;
 
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +40,7 @@ public class StorageService {
     private final ItemMapper itemMapper;
     private final ProjectRepository projectRepository;
     private final StorageMapper storageMapper;
+    private final ItemQuery itemQuery;
 
     @SneakyThrows
     public StorageResponse createStorage(Long projectId, StorageCreateDto dto) {
@@ -293,13 +295,15 @@ public class StorageService {
     public List<ItemResponse> findItemsMetadataByQuery(SearchMetadataQuery searchMetadataQuery) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<ItemEntity> items =
-                itemRepository.findByTagsInAndCategoriesInAndParametersInAndOwnerIdAndFileNameContains(
-                        searchMetadataQuery.getTags(),
-                        searchMetadataQuery.getCategories(),
-                        searchMetadataQuery.getParameters(),
-                        owner.getId(),
-                        searchMetadataQuery.getFileName());
+//        List<ItemEntity> items =
+//                itemRepository.findByTagsInAndCategoriesInAndParametersInAndOwnerIdAndFileNameContains(
+//                        searchMetadataQuery.getTags(),
+//                        searchMetadataQuery.getCategories(),
+//                        searchMetadataQuery.getParameters(),
+//                        owner.getId(),
+//                        searchMetadataQuery.getFileName());
+
+        List<ItemEntity> items = itemQuery.findItemsByParameters(searchMetadataQuery, owner);
 
         return items.stream()
                 .map(itemMapper::toResponse)

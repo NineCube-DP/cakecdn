@@ -8,6 +8,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/cakecdn_db
     username: cake
     password: UUcm3K4nT3MEFRmfRMj4
+  jpa:
+    show-sql: true
 
 minio:
   enabled: true
@@ -15,3 +17,9 @@ minio:
   credentials:
     accessKey: cake
     secretKey: sbmKVeCWHwd4fxbMqwuY
+
+logging:
+  level:
+    com:
+      querydsl:
+        sql: DEBUG
