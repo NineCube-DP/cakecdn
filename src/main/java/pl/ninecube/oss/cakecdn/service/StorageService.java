@@ -50,8 +50,11 @@ public class StorageService {
                 .findByIdAndOwnerId(projectId, owner.getId())
                 .orElseThrow(() -> new ResourceNotExistException("Project not found"));
 
+        String bucketName = getUuidForStorage();
+
         Storage storage = Storage.builder()
-                .name(projectEntity.getName() + "-" + dto.getName())
+                .name(dto.getName())
+                .bucketName(bucketName)
                 .projectId(projectEntity.getId())
                 .owner(owner)
                 .build();
@@ -131,8 +134,17 @@ public class StorageService {
         storageRepository.delete(storageEntity);
     }
 
+    // TODO: 17/01/2024 to refactor
     @NotNull
-    private String getNonExistingUuid() {
+    private String getUuidForStorage() {
+        UUID uuid;
+        do {
+            uuid = UUID.randomUUID();
+        } while (storageRepository.existsByBucketName(uuid.toString()));
+        return uuid.toString();
+    }
+    @NotNull
+    private String getUuidForItem() {
         UUID uuid;
         do {
             uuid = UUID.randomUUID();
@@ -151,7 +163,7 @@ public class StorageService {
 
         var storage = storageMapper.toDomain(storageEntity);
 
-        var uuid = getNonExistingUuid();
+        var uuid = getUuidForItem();
 
         var projectEntity = projectRepository.findById(storage.getProjectId())
                 .orElseThrow(() -> new BusinessException("Project not exist"));

@@ -24,5 +24,6 @@ public class StorageEntity extends BaseEntity {
     Long projectId;
 
     String name;
+    String bucketName;
 
 }

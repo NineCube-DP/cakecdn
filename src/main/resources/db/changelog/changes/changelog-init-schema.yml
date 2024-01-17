@@ -447,3 +447,15 @@ databaseChangeLog:
         - dropColumn:
             tableName: projects
             columnName: account_id
+  - changeSet:
+      id: 'add bucket name for storage'
+      author: 'dpustula'
+      changes:
+        - addColumn:
+            tableName: storages
+            columns:
+              - column:
+                  name: bucket_name
+                  constraints:
+                    nullable: false
+                  type: VARCHAR

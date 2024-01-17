@@ -19,4 +19,6 @@ public interface StorageRepository extends CrudRepository<StorageEntity, Long> {
     Optional<StorageEntity> findByIdAndOwnerId(Long bucketId, Long ownerId);
 
     Optional<StorageEntity> findByName(String storageName);
+
+    boolean existsByBucketName(String bucketName);
 }

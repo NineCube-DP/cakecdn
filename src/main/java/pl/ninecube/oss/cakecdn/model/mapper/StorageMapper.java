@@ -17,6 +17,7 @@ public abstract class StorageMapper {
     @Mapping(ignore = true, target = "owner")
     @Mapping(ignore = true, target = "version")
     @Mapping(ignore = true, target = "projectId")
+    @Mapping(ignore = true, target = "bucketName")
     public abstract Storage toDomain(StorageCreateDto dto);
 
     @Mapping(ignore = true, target = "items")

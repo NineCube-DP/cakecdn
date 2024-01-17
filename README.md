@@ -38,3 +38,8 @@ To download file you can use two endpoints:
   returned as response (field look at `id`)
 
 Full path to file is provided in POST `/storage` or in GET `/storage/item/{itemId}/metadata` in field `url`
+
+## Development
+```bash
+docker compose --profile local up -d
+```

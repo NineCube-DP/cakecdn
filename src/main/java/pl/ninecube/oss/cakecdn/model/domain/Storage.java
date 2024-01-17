@@ -17,17 +17,10 @@ public class Storage extends Ownable {
     Long projectId;
 
     String name;
+    String bucketName;
 
     List<Item> items;
 
     @Setter(AccessLevel.NONE)
     Long version;
-
-    public String getName() {
-        return this.name.split("-", 1)[0];
-    }
-
-    public String getBucketName() {
-        return this.name.toLowerCase();
-    }
 }
