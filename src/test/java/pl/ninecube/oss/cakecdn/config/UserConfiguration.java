@@ -1,3 +1,4 @@
+/* (C)2024 */
 package pl.ninecube.oss.cakecdn.config;
 
 import lombok.RequiredArgsConstructor;
@@ -14,37 +15,40 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 @RequiredArgsConstructor
 @Profile({"integration"})
 public class UserConfiguration {
 
     private final PasswordEncoder passwordEncoder;
 
+    public static final String PLAIN_USER = "plain_user";
+    public static final String ADMIN = "admin";
+
     @Bean
     @Primary
     AccountRepository mockAccountRepository(AccountRepository repository) {
-        AccountRepository mock = mock(AccountRepository.class, AdditionalAnswers.delegatesTo(repository));
+        AccountRepository mock =
+                mock(AccountRepository.class, AdditionalAnswers.delegatesTo(repository));
 
-        AccountEntity admin = AccountEntity.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("password"))
-                .id(0L)
-                .role("ADMIN")
-                .fullAccessPermission(false)
-                .build();
+        AccountEntity admin =
+                AccountEntity.builder()
+                        .username(ADMIN)
+                        .password(passwordEncoder.encode("password"))
+                        .id(0L)
+                        .role("ADMIN")
+                        .fullAccessPermission(false)
+                        .build();
 
-        AccountEntity test = AccountEntity.builder()
-                .username("test")
-                .password(passwordEncoder.encode("password"))
-                .id(1L)
-                .fullAccessPermission(false)
-                .build();
+        AccountEntity plainUser =
+                AccountEntity.builder()
+                        .username(PLAIN_USER)
+                        .password(passwordEncoder.encode("password"))
+                        .id(1L)
+                        .fullAccessPermission(false)
+                        .build();
 
-        when(mock.findByUsername("admin"))
-                .thenReturn(Optional.of(admin));
-        when(mock.findByUsername("test"))
-                .thenReturn(Optional.of(test));
+        when(mock.findByUsername(ADMIN)).thenReturn(Optional.of(admin));
+        when(mock.findByUsername(PLAIN_USER)).thenReturn(Optional.of(plainUser));
 
         return mock;
     }

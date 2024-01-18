@@ -1,10 +1,11 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import pl.ninecube.oss.cakecdn.BaseIntegrationTest;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectResponse;
@@ -19,7 +20,9 @@ import java.util.Objects;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static pl.ninecube.oss.cakecdn.config.UserConfiguration.PLAIN_USER;
 
+@WithUserDetails(PLAIN_USER)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class ProjectRestControllerIT extends BaseIntegrationTest {
 
@@ -37,7 +40,6 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
         var result =
                 mvc.perform(
                                 post("/project")
-                                        .with(httpBasic("admin", "password"))
                                         .content(objectMapper.writeValueAsString(projectCreateDto))
                                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isCreated())
@@ -68,7 +70,7 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnExistingProjectTest() throws Exception {
-        AccountEntity account = accountRepository.findByUsername("admin").orElse(null);
+        AccountEntity account = accountRepository.findByUsername(PLAIN_USER).orElse(null);
         assert Objects.nonNull(account);
 
         var saved =
@@ -81,9 +83,7 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
                                 .build());
 
         var result =
-                mvc.perform(
-                                get("/project/{id}", saved.getId())
-                                        .with(httpBasic("admin", "password")))
+                mvc.perform(get("/project/{id}", saved.getId()))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -99,9 +99,7 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnErrorOnNonExistingProjectTest() throws Exception {
-        mvc.perform(
-                        get("/project/{id}", faker.number().numberBetween(9999, 99999))
-                                .with(httpBasic("admin", "password")))
+        mvc.perform(get("/project/{id}", faker.number().numberBetween(9999, 99999)))
                 .andExpect(status().isNotFound());
     }
 
@@ -116,7 +114,6 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
         var resultCreate =
                 mvc.perform(
                                 post("/project")
-                                        .with(httpBasic("admin", "password"))
                                         .content(objectMapper.writeValueAsString(projectCreateDto))
                                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isCreated())
@@ -131,12 +128,14 @@ class ProjectRestControllerIT extends BaseIntegrationTest {
         assert Objects.nonNull(project);
 
         var projectUpdateDto =
-                ProjectUpdateDto.builder().baseUrl("https://" + faker.internet().url()).enabled(true).build();
+                ProjectUpdateDto.builder()
+                        .baseUrl("https://" + faker.internet().url())
+                        .enabled(true)
+                        .build();
 
         var resultUpdate =
                 mvc.perform(
                                 put("/project/{id}", project.getId())
-                                        .with(httpBasic("admin", "password"))
                                         .content(objectMapper.writeValueAsString(projectUpdateDto))
                                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
