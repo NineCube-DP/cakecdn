@@ -46,18 +46,20 @@ public class StorageService {
     public StorageResponse createStorage(Long projectId, StorageCreateDto dto) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ProjectEntity projectEntity = projectRepository
-                .findByIdAndOwnerId(projectId, owner.getId())
-                .orElseThrow(() -> new ResourceNotExistException("Project not found"));
+        ProjectEntity projectEntity =
+                projectRepository
+                        .findByIdAndOwnerId(projectId, owner.getId())
+                        .orElseThrow(() -> new ResourceNotExistException("Project not found"));
 
         String bucketName = getUuidForStorage();
 
-        Storage storage = Storage.builder()
-                .name(dto.getName())
-                .bucketName(bucketName)
-                .projectId(projectEntity.getId())
-                .owner(owner)
-                .build();
+        Storage storage =
+                Storage.builder()
+                        .name(dto.getName())
+                        .bucketName(bucketName)
+                        .projectId(projectEntity.getId())
+                        .owner(owner)
+                        .build();
 
         if (isBucketExist(storage.getBucketName())) {
             throw new BusinessException("Bucket already exist");
@@ -93,9 +95,10 @@ public class StorageService {
 
     @Transactional
     public StorageResponse getStorageMetadataByName(String storageName, Long ownerId) {
-        StorageEntity storageEntity = storageRepository
-                .findByNameAndOwnerId(storageName, ownerId)
-                .orElseThrow(() -> new BusinessException("Bucket not exist"));
+        StorageEntity storageEntity =
+                storageRepository
+                        .findByNameAndOwnerId(storageName, ownerId)
+                        .orElseThrow(() -> new BusinessException("Bucket not exist"));
 
         List<ItemEntity> items = itemRepository.findByStorageId(storageEntity.getId());
         Storage storage = storageMapper.toDomain(storageEntity);
@@ -107,7 +110,9 @@ public class StorageService {
     public List<StorageResponse> findStorageMetadatasByName(String storageName) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        var entity = storageRepository.findAllByNameContainingIgnoreCaseAndOwnerId(storageName, owner.getId());
+        var entity =
+                storageRepository.findAllByNameContainingIgnoreCaseAndOwnerId(
+                        storageName, owner.getId());
 
         return entity.stream()
                 .map(storageMapper::toDomain)
@@ -143,6 +148,7 @@ public class StorageService {
         } while (storageRepository.existsByBucketName(uuid.toString()));
         return uuid.toString();
     }
+
     @NotNull
     private String getUuidForItem() {
         UUID uuid;
@@ -165,8 +171,10 @@ public class StorageService {
 
         var uuid = getUuidForItem();
 
-        var projectEntity = projectRepository.findById(storage.getProjectId())
-                .orElseThrow(() -> new BusinessException("Project not exist"));
+        var projectEntity =
+                projectRepository
+                        .findById(storage.getProjectId())
+                        .orElseThrow(() -> new BusinessException("Project not exist"));
 
         var item =
                 Item.builder()
@@ -176,11 +184,12 @@ public class StorageService {
                         .fileSize(file.getSize())
                         .storageId(storage.getId())
                         .uuid(uuid)
-                        .url(projectEntity.getBaseUrl().replaceAll("/$", "")
-                                + "/cdn/"
-                                + storage.getName()
-                                + "/"
-                                + uuid)
+                        .url(
+                                projectEntity.getBaseUrl().replaceAll("/$", "")
+                                        + "/cdn/"
+                                        + storage.getName()
+                                        + "/"
+                                        + uuid)
                         .build();
 
         if (isBucketExist(storage.getBucketName())) {
@@ -236,7 +245,6 @@ public class StorageService {
                 itemRepository
                         .findByStorageIdAndUuid(storage.getId(), itemUuid)
                         .orElseThrow(() -> new BusinessException("File not exist"));
-
 
         return client.getObject(
                         GetObjectArgs.builder()
@@ -306,14 +314,6 @@ public class StorageService {
     @Transactional
     public List<ItemResponse> findItemsMetadataByQuery(SearchMetadataQuery searchMetadataQuery) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-//        List<ItemEntity> items =
-//                itemRepository.findByTagsInAndCategoriesInAndParametersInAndOwnerIdAndFileNameContains(
-//                        searchMetadataQuery.getTags(),
-//                        searchMetadataQuery.getCategories(),
-//                        searchMetadataQuery.getParameters(),
-//                        owner.getId(),
-//                        searchMetadataQuery.getFileName());
 
         List<ItemEntity> items = itemQuery.findItemsByParameters(searchMetadataQuery, owner);
 

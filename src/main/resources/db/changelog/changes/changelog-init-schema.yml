@@ -456,6 +456,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: bucket_name
+                  defaultValue: ''
                   constraints:
                     nullable: false
                   type: VARCHAR
