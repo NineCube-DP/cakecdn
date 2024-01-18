@@ -100,7 +100,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: enabled
-                  defaultValueBoolean: false
                   type: BOOLEAN
               - column:
                   name: version
@@ -347,7 +346,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: full_access_permission
-                  defaultValueBoolean: false
                   type: BOOLEAN
   - changeSet:
       id: 'add application token table'
@@ -409,7 +407,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: owner_id
-                  defaultValue: 0
                   constraints:
                     nullable: false
                   type: BIGINT
@@ -418,7 +415,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: owner_id
-                  defaultValue: 0
                   constraints:
                     nullable: false
                   type: BIGINT
@@ -427,7 +423,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: owner_id
-                  defaultValue: 0
                   constraints:
                     nullable: false
                   type: BIGINT
@@ -436,7 +431,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: owner_id
-                  defaultValue: 0
                   constraints:
                     nullable: false
                   type: BIGINT
@@ -456,7 +450,6 @@ databaseChangeLog:
             columns:
               - column:
                   name: bucket_name
-                  defaultValue: ''
                   constraints:
                     nullable: false
                   type: VARCHAR
