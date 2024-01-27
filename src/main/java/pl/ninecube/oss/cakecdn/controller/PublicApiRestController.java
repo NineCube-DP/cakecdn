@@ -11,7 +11,7 @@ import pl.ninecube.oss.cakecdn.service.ApplicationTokenService;
 import pl.ninecube.oss.cakecdn.service.StorageService;
 
 @RestController
-@RequestMapping("/cdn")
+@RequestMapping("/files")
 @RequiredArgsConstructor
 @Tag(name = "Api for direct use")
 @CrossOrigin(originPatterns = "*", allowCredentials = "true")

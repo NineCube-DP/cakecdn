@@ -186,7 +186,7 @@ public class StorageService {
                         .uuid(uuid)
                         .url(
                                 projectEntity.getBaseUrl().replaceAll("/$", "")
-                                        + "/cdn/"
+                                        + "/files/"
                                         + storage.getName()
                                         + "/"
                                         + uuid)

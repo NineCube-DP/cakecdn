@@ -44,7 +44,7 @@ public class SecurityConfig {
                                         .authenticated()
                                         .requestMatchers("/token/**")
                                         .authenticated()
-                                        .requestMatchers("/cdn/**")
+                                        .requestMatchers("/files/**")
                                         .permitAll()
                                         .anyRequest()
                                         .authenticated())
