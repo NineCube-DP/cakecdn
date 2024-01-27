@@ -12,7 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
@@ -27,10 +27,10 @@ public abstract class BaseEntity implements Serializable {
     protected Long ownerId;
 
     @CreatedDate
-    private OffsetDateTime creationTimeStamp;
+    private LocalDateTime creationTimeStamp;
 
     @LastModifiedDate
-    private OffsetDateTime modificationTimeStamp;
+    private LocalDateTime modificationTimeStamp;
 
     protected BaseEntity(BaseEntityBuilder<?, ?> b) {
         this.version = b.version;
