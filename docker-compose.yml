@@ -35,9 +35,9 @@ services:
       - "8080:8080"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`<domain>`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cake.rule=Host(`<domain>`)"
+      - "traefik.http.routers.cake.entrypoints=websecure"
+      - "traefik.http.routers.cake.tls.certresolver=letsencrypt"
     depends_on:
       - db
       - s3
