@@ -1,6 +1,28 @@
 version: '3'
 
 services:
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    profiles:
+      - prod
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.letsencrypt.acme.email=<email>"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
   app:
     build:
       context: .
@@ -8,8 +30,14 @@ services:
     image: cakecdn:latest
     profiles:
       - demo
+      - prod
     ports:
       - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`<domain>`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=letsencrypt"
     depends_on:
       - db
       - s3
@@ -20,6 +48,7 @@ services:
     profiles:
       - local
       - demo
+      - prod
     ports:
       - "5432:5432"
     volumes:
@@ -35,6 +64,7 @@ services:
     profiles:
       - local
       - demo
+      - prod
     ports:
       - "9000:9000"
       - "9001:9001"
