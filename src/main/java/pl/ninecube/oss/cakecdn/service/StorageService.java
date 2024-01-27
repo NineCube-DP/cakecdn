@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ninecube.oss.cakecdn.exception.BusinessException;
 import pl.ninecube.oss.cakecdn.exception.ResourceNotExistException;
+import pl.ninecube.oss.cakecdn.model.domain.File;
 import pl.ninecube.oss.cakecdn.model.domain.Item;
 import pl.ninecube.oss.cakecdn.model.domain.Owner;
 import pl.ninecube.oss.cakecdn.model.domain.Storage;
@@ -232,7 +233,7 @@ public class StorageService {
     }
 
     @SneakyThrows
-    public byte[] getFile(String storageName, String itemUuid) {
+    public File getFile(String storageName, String itemUuid) {
         // todo consider secure download file with app token
         StorageEntity storageEntity =
                 storageRepository
@@ -246,12 +247,15 @@ public class StorageService {
                         .findByStorageIdAndUuid(storage.getId(), itemUuid)
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
-        return client.getObject(
-                        GetObjectArgs.builder()
-                                .bucket(storage.getBucketName())
-                                .object(file.getUuid())
-                                .build())
-                .readAllBytes();
+        return File.builder()
+                .payload(client.getObject(
+                                GetObjectArgs.builder()
+                                        .bucket(storage.getBucketName())
+                                        .object(file.getUuid())
+                                        .build())
+                        .readAllBytes())
+                .fileName(file.getFileName())
+                .build();
     }
 
     @Transactional

@@ -20,3 +20,6 @@ minio:
   credentials:
     accessKey: cake
     secretKey: sbmKVeCWHwd4fxbMqwuY
+
+server:
+  forward-headers-strategy: framework

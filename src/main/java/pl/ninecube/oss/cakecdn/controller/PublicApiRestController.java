@@ -4,8 +4,15 @@ package pl.ninecube.oss.cakecdn.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.ninecube.oss.cakecdn.exception.BusinessException;
+import pl.ninecube.oss.cakecdn.model.domain.File;
 import pl.ninecube.oss.cakecdn.model.dto.StorageResponse;
 import pl.ninecube.oss.cakecdn.service.ApplicationTokenService;
 import pl.ninecube.oss.cakecdn.service.StorageService;
@@ -32,7 +39,17 @@ public class PublicApiRestController {
 
     @GetMapping("/{storageName}/{itemUuid}")
     @Operation(summary = "Get bytes of file by itemId")
-    public byte[] getFile(@PathVariable String storageName, @PathVariable String itemUuid) {
-        return storageService.getFile(storageName, itemUuid);
+    public ResponseEntity<Resource> getFile(@PathVariable String storageName, @PathVariable String itemUuid) {
+        File file = storageService.getFile(storageName, itemUuid);
+
+        ByteArrayResource resource = new ByteArrayResource(file.getPayload());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(resource.contentLength())
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                                .filename(file.getFileName())
+                                .build().toString())
+                .body(resource);
     }
 }
