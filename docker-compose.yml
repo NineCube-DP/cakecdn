@@ -10,18 +10,22 @@ services:
       #- "--log.level=DEBUG"
       - "--api.insecure=false"
       - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--providers.docker.exposedbydefault=false"
       - "--certificatesresolvers.letsencrypt.acme.email=<email>"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # this line is only for test purpose - set domain and run once, if traefik logs show no problem then disable
+      # look https://letsencrypt.org/docs/rate-limits/
+      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
       - "443:443"
       - "8080:8080"
     volumes:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefik_net
 
   app:
     build:
@@ -35,12 +39,24 @@ services:
       - "8080:8080"
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.cake.tls=true"
+      - "traefik.docker.network=traefik_net"
       - "traefik.http.routers.cake.rule=Host(`<domain>`)"
       - "traefik.http.routers.cake.entrypoints=websecure"
       - "traefik.http.routers.cake.tls.certresolver=letsencrypt"
+
     depends_on:
       - db
       - s3
+    environment:
+      - SPRING_DATASOURCE_USERNAME=cake
+      - SPRING_DATASOURCE_PASSWORD=UUcm3K4nT3MEFRmfRMj4
+      - MINIO_CREDENTIALS_ACCESSKEY=cake
+      - MINIO_CREDENTIALS_SECRETKEY=sbmKVeCWHwd4fxbMqwuY
+    networks:
+      - traefik_net
+      - cake_net
+
 
   db:
     image: postgres:16.1-alpine3.18
@@ -57,6 +73,8 @@ services:
       - POSTGRES_PASSWORD=UUcm3K4nT3MEFRmfRMj4
       - POSTGRES_USER=cake
       - POSTGRES_DB=cakecdn_db
+    networks:
+      - cake_net
 
   s3:
     image: minio/minio
@@ -74,7 +92,23 @@ services:
       MINIO_ROOT_USER: cake
       MINIO_ROOT_PASSWORD: sbmKVeCWHwd4fxbMqwuY
     command: server --console-address ":9001" /data
+    networks:
+      - cake_net
+    labels:
+      - "traefik.enable=false"
+      - "traefik.http.routers.cake.tls=true"
+      - "traefik.docker.network=traefik_net"
+      - "traefik.http.routers.cake.rule=Host(`<domain>`) && PathPrefix(`/minio`)"
+      - "traefik.http.routers.cake.entrypoints=websecure"
+      - "traefik.http.routers.cake.tls.certresolver=letsencrypt"
 
 volumes:
   s3_volume:
   db_volume:
+
+networks:
+  # if you already have traefik, rename and set external: true
+  traefik_net:
+    external: false
+  cake_net:
+    external: false
