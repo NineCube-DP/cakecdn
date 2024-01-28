@@ -1,6 +1,9 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -12,10 +15,6 @@ import pl.ninecube.oss.cakecdn.model.dto.ProjectResponse;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectUpdateDto;
 import pl.ninecube.oss.cakecdn.model.mapper.ProjectMapper;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +76,19 @@ public class ProjectService {
     public List<ProjectResponse> getProjectByName(String projectName) {
         Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        var entity = projectRepository.findAllByNameContainingIgnoreCaseAndOwnerId(projectName, owner.getId());
+        var entity =
+                projectRepository.findAllByNameContainingIgnoreCaseAndOwnerId(
+                        projectName, owner.getId());
+        return entity.stream()
+                .map(projectMapper::toResponse)
+                .sorted(Comparator.comparing(ProjectResponse::getId))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProjectResponse> getAllProjects() {
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        var entity = projectRepository.findAllByOwnerId(owner.getId());
         return entity.stream()
                 .map(projectMapper::toResponse)
                 .sorted(Comparator.comparing(ProjectResponse::getId))

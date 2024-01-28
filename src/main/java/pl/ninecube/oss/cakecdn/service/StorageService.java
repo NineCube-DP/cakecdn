@@ -3,6 +3,10 @@ package pl.ninecube.oss.cakecdn.service;
 
 import io.minio.*;
 import jakarta.transaction.Transactional;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +29,6 @@ import pl.ninecube.oss.cakecdn.repository.ItemRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 import pl.ninecube.oss.cakecdn.repository.StorageRepository;
 import pl.ninecube.oss.cakecdn.repository.query.ItemQuery;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -248,12 +247,13 @@ public class StorageService {
                         .orElseThrow(() -> new BusinessException("File not exist"));
 
         return File.builder()
-                .payload(client.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(storage.getBucketName())
-                                        .object(file.getUuid())
-                                        .build())
-                        .readAllBytes())
+                .payload(
+                        client.getObject(
+                                        GetObjectArgs.builder()
+                                                .bucket(storage.getBucketName())
+                                                .object(file.getUuid())
+                                                .build())
+                                .readAllBytes())
                 .fileName(file.getFileName())
                 .build();
     }
@@ -324,6 +324,17 @@ public class StorageService {
         return items.stream()
                 .map(itemMapper::toResponse)
                 .sorted(Comparator.comparing(ItemResponse::getId))
+                .collect(Collectors.toList());
+    }
+
+    public List<StorageResponse> getAllStorages() {
+        Owner owner = (Owner) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        var entity = storageRepository.findAllByOwnerId(owner.getId());
+
+        return entity.stream()
+                .map(storageMapper::toResponse)
+                .sorted(Comparator.comparing(StorageResponse::getId))
                 .collect(Collectors.toList());
     }
 }

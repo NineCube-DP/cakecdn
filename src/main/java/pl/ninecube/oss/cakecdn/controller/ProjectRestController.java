@@ -1,10 +1,11 @@
-/* (C)2023 */
+/* (C)2023-2024 */
 package pl.ninecube.oss.cakecdn.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,6 @@ import pl.ninecube.oss.cakecdn.model.dto.ProjectCreateDto;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectResponse;
 import pl.ninecube.oss.cakecdn.model.dto.ProjectUpdateDto;
 import pl.ninecube.oss.cakecdn.service.ProjectService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/project")
@@ -35,6 +34,12 @@ public class ProjectRestController {
     @Operation(summary = "Get project by id")
     public ProjectResponse readProject(@PathVariable Long projectId) {
         return projectService.getProjectById(projectId);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all projects")
+    public List<ProjectResponse> getAllProjects() {
+        return projectService.getAllProjects();
     }
 
     @GetMapping("/search")

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.ninecube.oss.cakecdn.model.dto.*;
 import pl.ninecube.oss.cakecdn.service.StorageService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/storage")
@@ -36,6 +35,12 @@ public class StorageRestController {
     @Operation(summary = "Get storage info by storageId")
     public StorageResponse getStorageMetadata(@PathVariable Long storageId) {
         return storageService.getStorageMetadata(storageId);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all storages")
+    public List<StorageResponse> getAllStorages() {
+        return storageService.getAllStorages();
     }
 
     @GetMapping("/search")
