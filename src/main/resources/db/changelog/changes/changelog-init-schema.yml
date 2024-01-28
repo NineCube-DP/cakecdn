@@ -313,14 +313,6 @@ databaseChangeLog:
                   name: value
                   type: VARCHAR
   - changeSet:
-      id: 'add unique base_url in project'
-      author: 'dpustula'
-      changes:
-        - addUniqueConstraint:
-            tableName: projects
-            columnNames: base_url
-            constraintName: uq_projects_base_url
-  - changeSet:
       id: 'add role to account'
       author: 'dpustula'
       changes:
