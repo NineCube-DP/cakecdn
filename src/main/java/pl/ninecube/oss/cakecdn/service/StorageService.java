@@ -3,10 +3,6 @@ package pl.ninecube.oss.cakecdn.service;
 
 import io.minio.*;
 import jakarta.transaction.Transactional;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +25,11 @@ import pl.ninecube.oss.cakecdn.repository.ItemRepository;
 import pl.ninecube.oss.cakecdn.repository.ProjectRepository;
 import pl.ninecube.oss.cakecdn.repository.StorageRepository;
 import pl.ninecube.oss.cakecdn.repository.query.ItemQuery;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -254,7 +255,7 @@ public class StorageService {
                                                 .object(file.getUuid())
                                                 .build())
                                 .readAllBytes())
-                .fileName(file.getFileName())
+                .fileName(file.getOriginalFileName())
                 .build();
     }
 
